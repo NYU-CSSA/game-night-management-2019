@@ -1,0 +1,6 @@
+{
+  "name": "Game Night",
+  "description": "Node.js App for Game Night",
+  "repository": "",
+  "keywords": ["node", "express", "static"]
+}
