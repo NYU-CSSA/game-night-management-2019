@@ -21,16 +21,20 @@ app.get('/login', function(request, response) {
 });
 
 app.post('/login', function(req, res) {
-	var ref = new Firebase("https://ilovemarshmellow.firebaseio.com/staff");
-	console.log(req.body);
-	ref.authWithPassword({
-	  email    : req.body.netid + "@nyu.edu",
+	var staffRef = new Firebase("https://ilovemarshmellow.firebaseio.com/staff");
+	var netid = req.body.netid;
+	console.log(netid + "@nyu.edu");
+	staffRef.authWithPassword({
+	  email    : netid + "@nyu.edu",
 	  password : req.body.password + ""
 	}, function(error, authData) {
+		console.log("hey");
 	  if (error) {
+	  	res.render('pages/login');
 	    console.log("Login Failed!", error);
 	  } else {
 	    console.log("Authenticated successfully with payload:", authData);
+	    res.render('pages/operation')
 	  }
 	});
 });
