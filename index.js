@@ -84,7 +84,8 @@ app.post('/login', function(req, res) {
   				{
   					//res.render('pages/registration');
   				}
-  				else
+  				
+          else
   				{	
   					//res.render('pages/error');
   				}
