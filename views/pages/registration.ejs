@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+
+  <% include ../partials/nav.ejs %>
+
+<div id="container" class="container">
+    <!-- LOGIN -->
+    <form id="frmLogin" role="form" method="post" action="/registration">
+         <h2>Create Player</h2>
+
+        <div class="form-group">
+            <label for="txtEmail">Player No.</label>
+            <input type="text" class="form-control" id="txtEmail" placeholder="Enter Player Number" name="playNo" />
+        </div>
+        <button type="submit" class="btn btn-default btn-block">Create</button>
+        <br />
+        <br />
+    </form>>
+    <!-- / LOGOUT -->
+</div>
+</body>
+</html>
