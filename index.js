@@ -20,6 +20,36 @@ app.get('/login', function(request, response) {
 	response.render('pages/login');
 });
 
+app.get('/signup', function(request, response) {
+	response.render('pages/signup');
+});
+
+app.post('/signup', function(req, res) {
+	var ref = new Firebase("https://ilovemarshmellow.firebaseio.com/");
+	ref.createUser({
+  		email: req.body.netid + "@nyu.edu",
+  		password: req.body.password + ""
+	}, function(error, userData) {
+  	if (error) {
+    	switch (error.code) {
+      		case "EMAIL_TAKEN":
+        		console.log("The new user account cannot be created because the email is already in use.");
+        		res.render('pages/login');
+        		break;
+      		case "INVALID_EMAIL":
+        		console.log("The specified email is not a valid email.");
+        		res.render('pages/login');
+        	break;
+      		default:
+        		console.log("Error creating user:", error);
+        		res.render('pages/login');
+    	}
+    } else {
+    	console.log("Successfully created user account with uid:", userData.uid);
+    	res.render('pages/login');
+  	}
+});
+});
 app.post('/login', function(req, res) {
 	var staffRef = new Firebase("https://ilovemarshmellow.firebaseio.com/staff");
 	var netid = req.body.netid;
