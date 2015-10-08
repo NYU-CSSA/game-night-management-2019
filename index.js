@@ -25,6 +25,11 @@ app.get('/signup', function(request, response) {
 });
 
 app.post('/signup', function(req, res) {
+	if (req.body.password != req.body.crnfrmpassword) {
+		onsole.log("not the same password");
+		res.render('pages/signup');
+		return;
+	}
 	var ref = new Firebase("https://ilovemarshmellow.firebaseio.com/");
 	ref.createUser({
   		email: req.body.netid + "@nyu.edu",
@@ -34,15 +39,15 @@ app.post('/signup', function(req, res) {
     	switch (error.code) {
       		case "EMAIL_TAKEN":
         		console.log("The new user account cannot be created because the email is already in use.");
-        		res.render('pages/login');
+        		res.render('pages/signup');
         		break;
       		case "INVALID_EMAIL":
         		console.log("The specified email is not a valid email.");
-        		res.render('pages/login');
-        	break;
+        		res.render('pages/signup');
+        		break;
       		default:
         		console.log("Error creating user:", error);
-        		res.render('pages/login');
+        		res.render('pages/signup');
     	}
     } else {
     	console.log("Successfully created user account with uid:", userData.uid);
