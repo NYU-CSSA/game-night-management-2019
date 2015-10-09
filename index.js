@@ -70,27 +70,25 @@ app.post('/login', function(req, res) {
 		{
 	  		res.render('pages/login');
 	    	console.log("Login Failed!", error);
-	  	} 
-	  	else 
-	  	{
-			staffRef.once("value", function(snapshot) 
-			{
-  				if(snapshot.child("aj1533").child("role").val() === 'dealer')
+	  } 
+	  else 
+	  {
+      staffRef.once("value", function(snapshot){
+        if(snapshot.child(netid).child("role").val() === 'dealer')
  				{
- 					console.log(snapshot.child("aj1533").child("role").val());
-					res.render('pages/registration');
-  				}
-  				else if(snapshot.hasChild("role") && snapshot.child("role").val === "registration")
-  				{
-  					//res.render('pages/registration');
-  				}
-  				
-          else
-  				{	
+          console.log(snapshot.child(netid).child("role").val(), "render to operation");
+          res.render('pages/operation');
+  			}
+  			else if(snapshot.hasChild("role") && snapshot.child("role").val === "registration")
+  			{
+  				console.log(snapshot.child(netid).child("role").val(), "render to registration");
+          res.render('pages/registration');
+  			}	
+        else
+  			{	
   					//res.render('pages/error');
-  				}
-  		
-  			});
+  			}
+      });
 		}
 	});
 });

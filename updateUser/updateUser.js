@@ -76,9 +76,10 @@ var player = function(uid){
 			var chipPool;
 			tournamentRef.child("chipPool").on("value", function(snapshot){
 				chipPool = snapshot.exportVal();
+				chipPool = chipPool + 50;
+				tournamentRef.update({"chipPool": chipPool });
 			});
-			chipPool = chipPool + 50;
-			tournamentRef.update({"chipPool": chipPool });
+			
 		}
 		else{
 			console.log("insufficient fare");
