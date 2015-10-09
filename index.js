@@ -94,8 +94,14 @@ app.post('/login', function(req, res) {
 });
 
 app.post('/registration', function(req,res){
-	var playNumber = req.body.playNo;
-	console.log("Add 100");
+	var uid = req.body.playNo;
+  var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+  playerRef.child(uid.toString()).update(
+  {
+      "chargeRemainTimes" : 3,
+      "chips" : 100
+  });
+  console.log("Add 100");
 	res.render('pages/success');
 })
 
