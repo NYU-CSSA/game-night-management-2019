@@ -103,7 +103,24 @@ app.post('/registration', function(req,res){
   });
   console.log("Add 100");
 	res.render('pages/success');
-})
+});
+
+// by Anna
+// find a player in firebase when dealer assistant clicks 'find'
+app.post('/findplayer', function(req, res) {
+  var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+  var playerNumber = req.body.playernumber
+  // TODO: varify that operater has logged in
+
+  playerRef.once("value", function(snapshot) {
+    if (snapshot.haschild(playNumber)) {
+
+    } else {
+      
+    }
+  });
+
+}); 
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

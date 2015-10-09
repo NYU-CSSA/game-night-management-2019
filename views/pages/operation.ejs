@@ -9,7 +9,14 @@
   <% include ../partials/nav.ejs %>
 
 <div id="container" class="container">
-    this is operation page
+    <form id="frmFindPlayer" role="form" method="post" action="/findplayer">
+        <div class="form-group">
+            <label for="txtPlayerNum">Player Number</label>
+            <input type="text" class="form-control" id="txtPlayerNum" placeholder="Enter Player Number" name="playernumber" />
+        </div>
+        <button type="submit" class="btn btn-default btn-block">Find</button>
+
+
 </div>
 </body>
 </html>
