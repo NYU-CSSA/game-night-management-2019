@@ -76,9 +76,9 @@ app.post('/login', function(req, res) {
 			staffRef.once("value", function(snapshot) 
 			{
   				if(snapshot.child("aj1533").child("role").val() === 'dealer')
- 				{
- 					console.log(snapshot.child("aj1533").child("role").val());
-					res.render('pages/registration');
+ 				  {
+ 				     console.log(snapshot.child("aj1533").child("role").val());
+					   res.render('pages/registration');
   				}
   				else if(snapshot.hasChild("role") && snapshot.child("role").val === "registration")
   				{
@@ -97,7 +97,14 @@ app.post('/login', function(req, res) {
 
 app.post('/registration', function(req,res){
 	var playNumber = req.body.playNo;
-	console.log("Add 100");
+  var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+  playerRef.update(
+  {
+    playNumber : {
+      "chargeRemainTimes" : 3,
+      "chips" : 100},
+  });
+  console.log("Add 100");
 	res.render('pages/success');
 })
 
