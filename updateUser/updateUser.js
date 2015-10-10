@@ -79,7 +79,6 @@ var player = function(uid){
 				chipPool = chipPool + 50;
 				tournamentRef.update({"chipPool": chipPool });
 			});
-			
 		}
 		else{
 			console.log("insufficient fare");
@@ -100,7 +99,7 @@ var player = function(uid){
 				"chargeRemainTimes": chargeRemainTimes
 			});
 		}else{
-			console.log("No more chance to refill");
+			console.log("No more chance to recharge the account");
 			return;
 		}
 	}
