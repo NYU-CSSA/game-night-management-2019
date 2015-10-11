@@ -29,7 +29,7 @@ app.get('/signup', function(request, response) {
 app.post('/signup', function(req, res) {
 	if (req.body.password != req.body.crnfrmpassword) {
 		onsole.log("not the same password");
-		res.render('pages/signup');
+		res.render('pages/error', {errortype : "not the same password"});
 		return;
 	}
 	var ref = new Firebase("https://ilovemarshmellow.firebaseio.com/");
@@ -41,15 +41,15 @@ app.post('/signup', function(req, res) {
     	switch (error.code) {
       		case "EMAIL_TAKEN":
         		console.log("The new user account cannot be created because the email is already in use.");
-        		res.render('pages/signup');
+            res.render('pages/error', {errortype : "email taken!"});
         		break;
       		case "INVALID_EMAIL":
         		console.log("The specified email is not a valid email.");
-        		res.render('pages/signup');
+        		res.render('pages/error', {errortype : "Invalid email"});
         		break;
       		default:
         		console.log("Error creating user:", error);
-        		res.render('pages/signup');
+        		res.render('pages/error', {errortype : "not sure -v-"});
     	}
     } else {
     	console.log("Successfully created user account with uid:", userData.uid);
@@ -70,23 +70,26 @@ app.post('/login', function(req, res) {
 		{
 	  		res.render('pages/login');
 	    	console.log("Login Failed!", error);
+        res.render('pages/error', {errortype : "wrong Netid or pwd"});
 	  } 
 	  else 
 	  {
       staffRef.once("value", function(snapshot){
-        if(snapshot.child(netid).child("role").val() === 'dealer')
+        var myrole = snapshot.child(netid).child("role").val();
+        if(myrole === 'dealer')
  				{
           console.log(snapshot.child(netid).child("role").val(), "render to operation");
           res.render('pages/operation');
   			}
-  			else if(snapshot.hasChild("role") && snapshot.child("role").val === "registration")
+  			else if(myrole === "registration")
   			{
   				console.log(snapshot.child(netid).child("role").val(), "render to registration");
           res.render('pages/registration');
   			}	
         else
   			{	
-  					//res.render('pages/error');
+          console.log("no role, role = " + role);
+  				res.render('pages/error', {errortype : "no role"});
   			}
       });
 		}
@@ -96,13 +99,34 @@ app.post('/login', function(req, res) {
 app.post('/registration', function(req,res){
 	var uid = req.body.playNo;
   var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
-  playerRef.child(uid.toString()).update(
-  {
-      "chargeRemainTimes" : 3,
-      "chips" : 100
+  playerRef.once("value", function(snapshot){
+    if(snapshot.hasChild(uid.toString()))
+    {
+      var tmp = snapshot.child(uid.toString()).child("chargeRemainTimes").val();
+      if(tmp > 0){
+        playerRef.child(uid.toString()).update({
+          chargeRemainTimes : tmp - 1,
+          chips : snapshot.child(uid.toString()).child("chips").val() + 100
+        });
+        console.log("Add 100, time--");
+        console.log("chargeRemainTimes = " + snapshot.child(uid.toString()).child("chargeRemainTimes").val());
+        res.render('pages/success');
+      }
+      else{
+        console.log("chargeRemainTimes没啦!");
+        res.render('pages/error', {errortype : "chargeRemainTimes没啦!"});
+      }
+    }
+    else{
+      playerRef.child(uid.toString()).update(
+        {
+          "chargeRemainTimes" : 3,
+          "chips" : 100
+        });
+      console.log("Add 100(created)");
+      res.render('pages/success');
+    }
   });
-  console.log("Add 100");
-	res.render('pages/success');
 });
 
 // by Anna
