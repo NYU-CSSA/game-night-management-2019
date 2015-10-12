@@ -4,7 +4,7 @@
   "description": "Node.js App for Game Night",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "NODE_PATH=./config:./app/controllers node index.js"
   },
   "dependencies": {
     "body-parser": "1.14.0",
