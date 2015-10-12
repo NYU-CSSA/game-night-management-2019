@@ -79,7 +79,7 @@ module.exports = exports = function(app) {
           } 
           else
           { 
-            console.log("no role, role = " + role);
+            console.log("no role, role = " + myrole);
             res.render('pages/error', {errortype : "no role"});
           }
         });
