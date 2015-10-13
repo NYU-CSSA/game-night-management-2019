@@ -6,14 +6,25 @@
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li class="navbar-right">
+      <% if(typeof(logined) != 'undefined' && logined){ %>
+          <li class="navbar-right">
+          <a href="/login">Sign out</a>
+        </li>
+        <li class="navbar-right">
+          <a href="/registration">Registration</a>
+        </li>
+        <li class="navbar-right">
+          <a href="/operation">Operation</a>
+        </li>
+      <% } else{ %>
+        <li class="navbar-right">
+          <a href="/login">Log in</a>
+        </li>
+        <li class="navbar-right">
+          <a href="/signup">Sign up</a>
+        </li>
+    <% } %>
 
-
-        <a href="/login">Log in</a>
-      </li>
-      <li class="navbar-right">
-        <a href="/signup">Sign up</a>
-      </li>
     </ul>
   </div>
 </nav>
