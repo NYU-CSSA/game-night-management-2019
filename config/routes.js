@@ -30,7 +30,6 @@ module.exports = exports = function(app) {
           curPlayer['id'] = playerid;
           curPlayer['chips'] = curPlayerRef.child('chips').val();
           curPlayer['times'] = curPlayerRef.child('chargeRemainTimes').val();
-          console.log("found : " + playerid);
         } else {
           // TODO: pop up a window or sth
           console.log("player doesn't exist");
@@ -40,7 +39,7 @@ module.exports = exports = function(app) {
         console.log("Read from player ref failed: " + errObject.code);
       });
     } 
-    res.render('pages/operation', { player: curPlayer });
+    res.render('pages/operation', { player: curPlayer});
   });
 
   app.get('/signup', function(request, response) {
@@ -133,31 +132,18 @@ module.exports = exports = function(app) {
           if(myrole === 'dealer')
           {
             console.log(snapshot.child(netid).child("role").val(), "render to operation");
-<<<<<<< HEAD
-            res.redirect('/operation');
-            return;
-=======
             res.redirect('pages/operation');
->>>>>>> anna
           }
           else if(myrole === "registration")
           {
             console.log(snapshot.child(netid).child("role").val(), "render to registration");
-<<<<<<< HEAD
-            res.redirect('/registration');
-            return;
-=======
             res.redirect('pages/registration');
->>>>>>> anna
+
           } 
           else
           { 
             console.log("no role, role = " + myrole);
-<<<<<<< HEAD
-            res.render('pages/error', {errortype : "no role"});
-=======
             res.redirect('pages/error', { errortype : "no role" });
->>>>>>> anna
           }
         });
       }
@@ -205,19 +191,12 @@ module.exports = exports = function(app) {
   // by Anna
   // find a player in firebase when dealer assistant clicks 'find'
   app.post('/findplayer', function(req, res) {
-<<<<<<< HEAD
-    var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
-    var authData = ref.getAuth();
-    if (!authData) {
-      res.render('pages/error', {errortype : 'please login first-v-', logined : authData});
-    }
+    // var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
+    // var authData = ref.getAuth();
+    // if (!authData) {
+    //   res.render('pages/error', {errortype : 'please login first-v-', logined : authData});
+    // }
     var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
-    var playerNumber = req.body.playernumber
-    // TODO: varify that operater has logged in
-=======
->>>>>>> anna
-
-     // TODO: varify that operater has logged in
     var playerNumber = req.body.playernumber;
     req.session.uid = playerNumber;
     res.redirect('/operation?uid=' + playerNumber);
@@ -236,15 +215,12 @@ module.exports = exports = function(app) {
     res.redirect('operation?uid=' + playerid);
   });
 
-<<<<<<< HEAD
-  });
 
   /* --------- Not found ----------- */ 
   app.use(function (req, res) {
     res.status(404).render('pages/error', {errortype: '404 Page Not found'});
   });
 
-=======
   app.post('/submoney', function(req, res) {
     var subAmount = parseInt(req.body.takeoutmoneyamount);
     var playerid = req.body.uid;
@@ -256,5 +232,5 @@ module.exports = exports = function(app) {
     });
     res.redirect('operation?uid=' + playerid);
   });
->>>>>>> anna
+
 }
