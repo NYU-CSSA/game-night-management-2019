@@ -18,7 +18,22 @@ module.exports = exports = function(app) {
     response.render('pages/login');
   });
 
+  app.get('/signup', function(request, response) {
+    response.render('pages/signup');
+  });
+
+  app.get('/error', function(request, response) {
+    response.render('pages/error');
+  });
+
+  /* -------- With Authoration ----------- */
   app.get('/operation', function(req, res) {
+    var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
+    var authData = ref.getAuth();
+    if (!authData) {
+      res.render('pages/error', {errortype : 'please login first-v-', logined : authData});
+      return;
+    }
     var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
     var playerid = req.query.uid;
     var curPlayer = null
@@ -38,31 +53,8 @@ module.exports = exports = function(app) {
       }, function (errObject) {
         console.log("Read from player ref failed: " + errObject.code);
       });
-    } 
-    res.render('pages/operation', { player: curPlayer});
-  });
-
-  app.get('/signup', function(request, response) {
-    response.render('pages/signup');
-  });
-
-  app.get('/error', function(request, response) {
-    response.render('pages/error');
-  });
-
-
-
-  /* -------- With Authoration ----------- */
-  app.get('/operation',function(req,res){
-    var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
-    var authData = ref.getAuth();
-    if (authData) {
-      console.log("Authenticated user with uid:", authData.uid);
-      res.render('pages/operation', {logined : authData});
     }
-    else{
-      res.render('pages/error', {errortype : 'please login first-v-', logined : authData});
-    }
+    res.render('pages/operation', { player: curPlayer, logined : authData});
   });
 
   app.get('/registration',function(req,res){
@@ -82,7 +74,6 @@ module.exports = exports = function(app) {
     if (req.body.password != req.body.crnfrmpassword) {
       console.log("not the same password");
       res.render('pages/error', {errortype : "not the same password"});
-      return;
     }
     var ref = new Firebase("https://ilovemarshmellow.firebaseio.com/");
     ref.createUser({
@@ -143,7 +134,9 @@ module.exports = exports = function(app) {
           else
           { 
             console.log("no role, role = " + myrole);
-            res.render('pages/error', { errortype : "no role" });
+            var ref = new Firebase("https://ilovemarshmellow.firebaseio.com/");
+            ref.unauth();
+            res.render('pages/error', { errortype : "you need permission to access" });
           }
         });
       }
@@ -191,11 +184,12 @@ module.exports = exports = function(app) {
   // by Anna
   // find a player in firebase when dealer assistant clicks 'find'
   app.post('/findplayer', function(req, res) {
-    // var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
-    // var authData = ref.getAuth();
-    // if (!authData) {
-    //   res.render('pages/error', {errortype : 'please login first-v-', logined : authData});
-    // }
+    var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
+    var authData = ref.getAuth();
+    if (!authData) {
+      res.render('pages/error', {errortype : 'please login first-v-', logined : authData});
+      return;
+    }
     var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
     var playerNumber = req.body.playernumber;
     req.session.uid = playerNumber;
