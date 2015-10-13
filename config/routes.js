@@ -1,6 +1,10 @@
 var Firebase = require('firebase');
+var player = require('player');
+var session = require('express-session');
 
 module.exports = exports = function(app) {
+
+
   /* ---------  GETs ---------- */
   app.get('/', function(request, response) {
     response.render('pages/index');
@@ -8,6 +12,31 @@ module.exports = exports = function(app) {
 
   app.get('/login', function(request, response) {
     response.render('pages/login');
+  });
+
+  app.get('/operation', function(req, res) {
+    var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+    var playerid = req.query.uid;
+    var curPlayer = null
+    if (playerid) {
+        playerRef.on("value", function(snapshot) {
+        if (snapshot.hasChild(playerid)) {
+          var curPlayerRef = snapshot.child(playerid);
+          curPlayer = {};
+          curPlayer['id'] = playerid;
+          curPlayer['chips'] = curPlayerRef.child('chips').val();
+          curPlayer['times'] = curPlayerRef.child('chargeRemainTimes').val();
+          console.log("found : " + playerid);
+        } else {
+          // TODO: pop up a window or sth
+          console.log("player doesn't exist");
+        }
+        console.log(snapshot.val());
+      }, function (errObject) {
+        console.log("Read from player ref failed: " + errObject.code);
+      });
+    } 
+    res.render('pages/operation', { player: curPlayer });
   });
 
   app.get('/signup', function(request, response) {
@@ -70,17 +99,17 @@ module.exports = exports = function(app) {
           if(myrole === 'dealer')
           {
             console.log(snapshot.child(netid).child("role").val(), "render to operation");
-            res.render('pages/operation');
+            res.redirect('pages/operation');
           }
           else if(myrole === "registration")
           {
             console.log(snapshot.child(netid).child("role").val(), "render to registration");
-            res.render('pages/registration');
+            res.redirect('pages/registration');
           } 
           else
           { 
             console.log("no role, role = " + myrole);
-            res.render('pages/error', {errortype : "no role"});
+            res.redirect('pages/error', { errortype : "no role" });
           }
         });
       }
@@ -123,17 +152,35 @@ module.exports = exports = function(app) {
   // by Anna
   // find a player in firebase when dealer assistant clicks 'find'
   app.post('/findplayer', function(req, res) {
-    var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
-    var playerNumber = req.body.playernumber
-    // TODO: varify that operater has logged in
 
-    playerRef.once("value", function(snapshot) {
-      if (snapshot.haschild(playNumber)) {
-
-      } else {
-        
-      }
-    });
+     // TODO: varify that operater has logged in
+    var playerNumber = req.body.playernumber;
+    req.session.uid = playerNumber;
+    res.redirect('/operation?uid=' + playerNumber);
 
   }); 
+
+  app.post('/addmoney', function(req, res) {
+    var addAmount = parseInt(req.body.addmoneyamount);
+    var playerid = req.body.uid;
+    var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+    var curPlayerRef = playerRef.child(playerid.toString());
+    curPlayerRef.once("value", function(snapshot) {
+      var curChips = snapshot.child("chips").val();
+      curPlayerRef.update({ chips: curChips + addAmount });
+    });
+    res.redirect('operation?uid=' + playerid);
+  });
+
+  app.post('/submoney', function(req, res) {
+    var subAmount = parseInt(req.body.takeoutmoneyamount);
+    var playerid = req.body.uid;
+    var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+    var curPlayerRef = playerRef.child(playerid.toString());
+    curPlayerRef.once("value", function(snapshot) {
+      var curChips = snapshot.child("chips").val();
+      curPlayerRef.update({ chips: curChips - subAmount });
+    });
+    res.redirect('operation?uid=' + playerid);
+  });
 }
