@@ -80,7 +80,7 @@ module.exports = exports = function(app) {
   /* --------- POSTs ----------- */ 
   app.post('/signup', function(req, res) {
     if (req.body.password != req.body.crnfrmpassword) {
-      onsole.log("not the same password");
+      console.log("not the same password");
       res.render('pages/error', {errortype : "not the same password"});
       return;
     }
@@ -132,18 +132,18 @@ module.exports = exports = function(app) {
           if(myrole === 'dealer')
           {
             console.log(snapshot.child(netid).child("role").val(), "render to operation");
-            res.redirect('pages/operation');
+            res.redirect('/operation');
           }
           else if(myrole === "registration")
           {
             console.log(snapshot.child(netid).child("role").val(), "render to registration");
-            res.redirect('pages/registration');
+            res.redirect('/registration');
 
           } 
           else
           { 
             console.log("no role, role = " + myrole);
-            res.redirect('pages/error', { errortype : "no role" });
+            res.render('pages/error', { errortype : "no role" });
           }
         });
       }
