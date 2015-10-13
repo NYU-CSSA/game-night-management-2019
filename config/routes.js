@@ -209,12 +209,6 @@ module.exports = exports = function(app) {
     res.redirect('operation?uid=' + playerid);
   });
 
-
-  /* --------- Not found ----------- */ 
-  app.use(function (req, res) {
-    res.status(404).render('pages/error', {errortype: '404 Page Not found'});
-  });
-
   app.post('/submoney', function(req, res) {
     var subAmount = parseInt(req.body.takeoutmoneyamount);
     var playerid = req.body.uid;
@@ -226,5 +220,12 @@ module.exports = exports = function(app) {
     });
     res.redirect('operation?uid=' + playerid);
   });
+
+  /* --------- Not found ----------- */ 
+  app.use(function (req, res) {
+    res.status(404).render('pages/error', {errortype: '404 Page Not found'});
+  });
+
+  
 
 }
