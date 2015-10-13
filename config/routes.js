@@ -70,7 +70,19 @@ module.exports = exports = function(app) {
     var authData = ref.getAuth();
     if (authData) {
       console.log("Authenticated user with uid:", authData.uid);
-      res.render('pages/registration', {logined : authData});
+      var op = req.query.op;
+      var uid = req.query.uid;
+      if (!op || !uid) {
+        res.render('pages/registration', {logined : authData, msg: null});
+      } else {
+        var messange = null;
+        if (op == "add") {
+          messange = "added 100 for player " + uid;
+        } else if (op == "create") {
+          messange = "created player " + uid;
+        }
+        res.render('pages/registration', {logined : authData, msg: messange}); 
+      }
     }
     else{
       res.render('pages/error', {errortype : 'please login first-v-', logined : authData});
@@ -160,8 +172,7 @@ module.exports = exports = function(app) {
     var uid = req.body.playNo;
     var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
     playerRef.once("value", function(snapshot){
-      if(snapshot.hasChild(uid.toString()))
-      {
+      if(snapshot.hasChild(uid.toString())) {
         var tmp = snapshot.child(uid.toString()).child("chargeRemainTimes").val();
         if(tmp > 0){
           playerRef.child(uid.toString()).update({
@@ -170,7 +181,7 @@ module.exports = exports = function(app) {
           });
           console.log("Add 100, time--");
           console.log("chargeRemainTimes = " + snapshot.child(uid.toString()).child("chargeRemainTimes").val());
-          res.render('pages/success');
+          res.redirect('/registration?op=add&uid=' + uid);
         }
         else{
           console.log("chargeRemainTimes没啦!");
@@ -184,7 +195,7 @@ module.exports = exports = function(app) {
             "chips" : 100
           });
         console.log("Add 100(created)");
-        res.render('pages/success');
+        res.redirect('/registration?op=create&uid=' + uid);
       }
     });
   });
