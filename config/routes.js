@@ -1,6 +1,5 @@
 var Firebase = require('firebase');
 var player = require('player');
-var session = require('express-session');
 
 module.exports = exports = function(app) {
 
@@ -35,26 +34,35 @@ module.exports = exports = function(app) {
       return;
     }
     var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+    var tnmtRef = new Firebase("https://ilovemarshmellow.firebaseio.com/tournament");
+    var chipInPoll = 0;
+    tnmtRef.once("value", function(snapshot) {
+      chipInPoll = snapshot.child("chipPool").val();
+    });
     var playerid = req.query.uid;
     var curPlayer = null
     if (playerid) {
-        playerRef.on("value", function(snapshot) {
+        playerRef.once("value", function(snapshot) {
         if (snapshot.hasChild(playerid)) {
           var curPlayerRef = snapshot.child(playerid);
           curPlayer = {};
           curPlayer['id'] = playerid;
           curPlayer['chips'] = curPlayerRef.child('chips').val();
           curPlayer['times'] = curPlayerRef.child('chargeRemainTimes').val();
+          res.render('pages/operation', { player: curPlayer, logined : authData, chipsInPool: chipInPoll});
+          return;
         } else {
           // TODO: pop up a window or sth
+          res.render('pages/operation', { player: null, logined: authData, chipsInPool: chipInPoll});
           console.log("player doesn't exist");
         }
         console.log(snapshot.val());
       }, function (errObject) {
         console.log("Read from player ref failed: " + errObject.code);
       });
+    } else {
+      res.render('pages/operation', { player: curPlayer, logined : authData, chipsInPool: chipInPoll});
     }
-    res.render('pages/operation', { player: curPlayer, logined : authData});
   });
 
   app.get('/registration',function(req,res){
@@ -192,7 +200,6 @@ module.exports = exports = function(app) {
     }
     var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
     var playerNumber = req.body.playernumber;
-    req.session.uid = playerNumber;
     res.redirect('/operation?uid=' + playerNumber);
 
   }); 
@@ -216,11 +223,30 @@ module.exports = exports = function(app) {
     var curPlayerRef = playerRef.child(playerid.toString());
     curPlayerRef.once("value", function(snapshot) {
       var curChips = snapshot.child("chips").val();
-      curPlayerRef.update({ chips: curChips - subAmount });
+      if (curChips >= subAmount) {
+        curPlayerRef.update({ chips: curChips - subAmount });        
+      }
     });
     res.redirect('operation?uid=' + playerid);
   });
 
+  app.post('/entertournament', function(req, res) {
+    var playerid = req.body.uid;
+    var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+    var tnmtRef = new Firebase("https://ilovemarshmellow.firebaseio.com/tournament");
+    var curPlayerRef = playerRef.child(playerid.toString());
+    curPlayerRef.once("value", function(snapshot) {
+      var curChips = snapshot.child("chips").val();
+      if (curChips >= 50) {
+        curPlayerRef.update({ chips: curChips - 50 });
+        tnmtRef.once("value", function(snapshot) {
+          var curInPool = snapshot.child("chipPool").val();
+          tnmtRef.update({chipPool: curInPool + 50});
+        });        
+      }
+    });
+    res.redirect('operation?uid=' + playerid);
+  });
   /* --------- Not found ----------- */ 
   app.use(function (req, res) {
     res.status(404).render('pages/error', {errortype: '404 Page Not found'});
