@@ -2,6 +2,13 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
+  <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  <style>
+    table, th, td, tr {
+      border: 1px solid black;
+    }
+  </style>
 </head>
 
 <body>
@@ -36,7 +43,27 @@
     </div>
   </div> <!-- row -->
 </div>
-
-
+<table id="leaderboardTable">
+    <tr>
+      <th>Player</th>
+      <th>Score</th>
+    </tr>
+  </table>
+<script type="text/javascript">
+    var scoresRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+    
+    scoresRef.orderByChild("chips").limitToLast(3).on("value", function(snapshot) {
+      snapshot.forEach(function(data) {
+        console.log("The " , data.key() , " has chips " , data.val());
+        var newScoreRow = $("<tr/>");
+        newScoreRow.append($("<td/>").append($("<em/>").text(data.key())));
+        newScoreRow.append($("<td/>").text(data.val().chips));
+        newScoreRow.append($("<tr/>"));
+        $("#leaderboardTable").append(newScoreRow);
+      });
+      
+      
+    });
+</script>
 </body>
 </html>

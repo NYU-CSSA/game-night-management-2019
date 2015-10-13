@@ -8,6 +8,7 @@ module.exports = exports = function(app) {
   app.get('/', function(request, response) {
     var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
     var authData = ref.getAuth();
+    
     response.render('pages/index', {logined : authData});
   });
 
@@ -132,9 +133,8 @@ module.exports = exports = function(app) {
       console.log("hey");
       if (error) 
       {
-          res.redirect('/login');
-          console.log("Login Failed!", error);
-          res.render('pages/error', {errortype : "wrong Netid or pwd"});
+        console.log("Login Failed!", error);
+        res.render('pages/error', {errortype : "wrong Netid or pwd"});
       } 
       else 
       {
@@ -192,7 +192,8 @@ module.exports = exports = function(app) {
         playerRef.child(uid.toString()).update(
           {
             "chargeRemainTimes" : 3,
-            "chips" : 100
+            "chips" : 100,
+            "tnmremaintimes" : 3
           });
         console.log("Add 100(created)");
         res.redirect('/registration?op=create&uid=' + uid);
@@ -247,9 +248,15 @@ module.exports = exports = function(app) {
     var tnmtRef = new Firebase("https://ilovemarshmellow.firebaseio.com/tournament");
     var curPlayerRef = playerRef.child(playerid.toString());
     curPlayerRef.once("value", function(snapshot) {
+      var curtnmremaintimes = snapshot.child("tnmremaintimes").val();
+      if (curtnmremaintimes == 0) {
+        res.render('pages/error', {errortype : "已经进3次惹"})
+        return;
+      }
       var curChips = snapshot.child("chips").val();
       if (curChips >= 50) {
         curPlayerRef.update({ chips: curChips - 50 });
+        curPlayerRef.update({ tnmremaintimes: curtnmremaintimes - 1 });
         tnmtRef.once("value", function(snapshot) {
           var curInPool = snapshot.child("chipPool").val();
           tnmtRef.update({chipPool: curInPool + 50});
