@@ -31,8 +31,8 @@ var player = function(uid){
 		playerRef.child(uid.toString()).on("value", function(snapshot){
 			console.log(snapshot.child("chips").val());
 			chip = snapshot.child("chips").exportVal();
+			return chip;
 		});
-		return chip;
 	};
 
 	this.getChargeRemainTimes = function(){
@@ -40,8 +40,9 @@ var player = function(uid){
 		playerRef.child(uid.toString()).on("value", function(snapshot){
 			console.log(snapshot.child("chargeRemainTimes").val());
 			chargeRemainTimes = snapshot.child("chargeRemainTimes").exportVal();
+			return chargeRemainTimes;
 		});
-		return chargeRemainTimes;
+		
 	};
 
 	//add chip

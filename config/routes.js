@@ -1,6 +1,10 @@
 var Firebase = require('firebase');
+var player = require('player');
+var session = require('express-session');
 
 module.exports = exports = function(app) {
+
+
   /* ---------  GETs ---------- */
   app.get('/', function(request, response) {
     var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
@@ -12,6 +16,31 @@ module.exports = exports = function(app) {
     var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
     ref.unauth();
     response.render('pages/login');
+  });
+
+  app.get('/operation', function(req, res) {
+    var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+    var playerid = req.query.uid;
+    var curPlayer = null
+    if (playerid) {
+        playerRef.on("value", function(snapshot) {
+        if (snapshot.hasChild(playerid)) {
+          var curPlayerRef = snapshot.child(playerid);
+          curPlayer = {};
+          curPlayer['id'] = playerid;
+          curPlayer['chips'] = curPlayerRef.child('chips').val();
+          curPlayer['times'] = curPlayerRef.child('chargeRemainTimes').val();
+          console.log("found : " + playerid);
+        } else {
+          // TODO: pop up a window or sth
+          console.log("player doesn't exist");
+        }
+        console.log(snapshot.val());
+      }, function (errObject) {
+        console.log("Read from player ref failed: " + errObject.code);
+      });
+    } 
+    res.render('pages/operation', { player: curPlayer });
   });
 
   app.get('/signup', function(request, response) {
@@ -104,19 +133,31 @@ module.exports = exports = function(app) {
           if(myrole === 'dealer')
           {
             console.log(snapshot.child(netid).child("role").val(), "render to operation");
+<<<<<<< HEAD
             res.redirect('/operation');
             return;
+=======
+            res.redirect('pages/operation');
+>>>>>>> anna
           }
           else if(myrole === "registration")
           {
             console.log(snapshot.child(netid).child("role").val(), "render to registration");
+<<<<<<< HEAD
             res.redirect('/registration');
             return;
+=======
+            res.redirect('pages/registration');
+>>>>>>> anna
           } 
           else
           { 
             console.log("no role, role = " + myrole);
+<<<<<<< HEAD
             res.render('pages/error', {errortype : "no role"});
+=======
+            res.redirect('pages/error', { errortype : "no role" });
+>>>>>>> anna
           }
         });
       }
@@ -164,6 +205,7 @@ module.exports = exports = function(app) {
   // by Anna
   // find a player in firebase when dealer assistant clicks 'find'
   app.post('/findplayer', function(req, res) {
+<<<<<<< HEAD
     var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
     var authData = ref.getAuth();
     if (!authData) {
@@ -172,15 +214,29 @@ module.exports = exports = function(app) {
     var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
     var playerNumber = req.body.playernumber
     // TODO: varify that operater has logged in
+=======
+>>>>>>> anna
 
-    playerRef.once("value", function(snapshot) {
-      if (snapshot.haschild(playNumber)) {
+     // TODO: varify that operater has logged in
+    var playerNumber = req.body.playernumber;
+    req.session.uid = playerNumber;
+    res.redirect('/operation?uid=' + playerNumber);
 
-      } else {
-        
-      }
+  }); 
+
+  app.post('/addmoney', function(req, res) {
+    var addAmount = parseInt(req.body.addmoneyamount);
+    var playerid = req.body.uid;
+    var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+    var curPlayerRef = playerRef.child(playerid.toString());
+    curPlayerRef.once("value", function(snapshot) {
+      var curChips = snapshot.child("chips").val();
+      curPlayerRef.update({ chips: curChips + addAmount });
     });
+    res.redirect('operation?uid=' + playerid);
+  });
 
+<<<<<<< HEAD
   });
 
   /* --------- Not found ----------- */ 
@@ -188,4 +244,17 @@ module.exports = exports = function(app) {
     res.status(404).render('pages/error', {errortype: '404 Page Not found'});
   });
 
+=======
+  app.post('/submoney', function(req, res) {
+    var subAmount = parseInt(req.body.takeoutmoneyamount);
+    var playerid = req.body.uid;
+    var playerRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+    var curPlayerRef = playerRef.child(playerid.toString());
+    curPlayerRef.once("value", function(snapshot) {
+      var curChips = snapshot.child("chips").val();
+      curPlayerRef.update({ chips: curChips - subAmount });
+    });
+    res.redirect('operation?uid=' + playerid);
+  });
+>>>>>>> anna
 }
