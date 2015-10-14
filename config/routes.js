@@ -268,8 +268,9 @@ module.exports = exports = function(app) {
           tnmtRef.update({chipPool: curInPool + 500});
         });        
       }
+      res.redirect('operation?uid=' + playerid);
     });
-    res.redirect('operation?uid=' + playerid);
+    
   });
   /* --------- Not found ----------- */ 
   app.use(function (req, res) {
