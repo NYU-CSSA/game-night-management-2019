@@ -255,7 +255,7 @@ module.exports = exports = function(app) {
     var curPlayerRef = playerRef.child(playerid.toString());
     curPlayerRef.once("value", function(snapshot) {
       var curtnmremaintimes = snapshot.child("tnmremaintimes").val();
-      if (curtnmremaintimes == 0) {
+      if (curtnmremaintimes <= 0) {
         res.render('pages/error', {errortype : "已经进3次惹"})
         return;
       }
