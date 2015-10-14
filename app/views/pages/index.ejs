@@ -50,6 +50,7 @@
   </tr>
 </table>
 <script type="text/javascript">
+  var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
   var authData = ref.getAuth();
   if (authData) {
       console.log("Authenticated user with uid:", authData.uid);
