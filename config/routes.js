@@ -265,7 +265,7 @@ module.exports = exports = function(app) {
         curPlayerRef.update({ tnmremaintimes: curtnmremaintimes - 1 });
         tnmtRef.once("value", function(snapshot) {
           var curInPool = snapshot.child("chipPool").val();
-          tnmtRef.update({chipPool: curInPool + 50});
+          tnmtRef.update({chipPool: curInPool + 500});
         });        
       }
     });
