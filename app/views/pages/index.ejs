@@ -50,16 +50,21 @@
   </tr>
 </table>
 <script type="text/javascript">
-  var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
+var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
   var authData = ref.getAuth();
+  //check client log in status
   if (authData) {
-      console.log("Authenticated user with uid:", authData.uid);
-    }
+    console.log("Authenticated user with uid:", authData.uid);
+  }
+  else{
+    console.log("not logged in");
+  }
   var swap = function(list, a ,b){
     var tmp = list[a];
     list[a] = list[b];
     list[b] = tmp;
-  }
+  };
+  //var scoresRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
   var scoresRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
   var flag = 0;
   scoresRef.orderByChild("chips").limitToLast(3).on("value", function(snapshot) {
@@ -92,6 +97,7 @@
       flag = 1;
     }  
   });
+
 </script>
 </body>
 </html>

@@ -8,7 +8,13 @@ module.exports = exports = function(app) {
   app.get('/', function(request, response) {
     var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
     var authData = ref.getAuth();
-    
+    //check server log in status
+    if (authData) {
+      console.log("server : Authenticated user with uid:", authData.uid);
+    }
+    else{
+      console.log("server: not logged in");
+    }
     response.render('pages/index', {logined : authData});
   });
 
