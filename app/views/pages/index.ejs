@@ -50,6 +50,10 @@
   </tr>
 </table>
 <script type="text/javascript">
+  var authData = ref.getAuth();
+  if (authData) {
+      console.log("Authenticated user with uid:", authData.uid);
+    }
   var swap = function(list, a ,b){
     var tmp = list[a];
     list[a] = list[b];
