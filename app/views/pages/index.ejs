@@ -44,26 +44,49 @@
   </div> <!-- row -->
 </div>
 <table id="leaderboardTable">
-    <tr>
-      <th>Player</th>
-      <th>Score</th>
-    </tr>
-  </table>
+  <tr>
+    <th>Player</th>
+    <th>Score</th>
+  </tr>
+</table>
 <script type="text/javascript">
-    var scoresRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
-    
-    scoresRef.orderByChild("chips").limitToLast(3).on("value", function(snapshot) {
-      snapshot.forEach(function(data) {
-        console.log("The " , data.key() , " has chips " , data.val());
-        var newScoreRow = $("<tr/>");
-        newScoreRow.append($("<td/>").append($("<em/>").text(data.key())));
-        newScoreRow.append($("<td/>").text(data.val().chips));
-        newScoreRow.append($("<tr/>"));
-        $("#leaderboardTable").append(newScoreRow);
-      });
-      
-      
+  var swap = function(list, a ,b){
+    var tmp = list[a];
+    list[a] = list[b];
+    list[b] = tmp;
+  }
+  var scoresRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
+  var flag = 0;
+  scoresRef.orderByChild("chips").limitToLast(3).on("value", function(snapshot) {
+    var table = document.getElementById("leaderboardTable");
+    if (flag == 1){
+      table.deleteRow(1);table.deleteRow(1);table.deleteRow(1);
+    }
+    var list = [];
+    snapshot.forEach(function(data) {
+      var key = data.key(), chips = data.val().chips;
+      var obj = {'key' : key, 'chips' : chips};
+      list.push(obj);
     });
+
+    if (list[0].chips > list[1].chips){
+      if (list[1].chips < list[2].chips) swap(list, 1, 2);
+    }
+    else{
+      if (list[1].chips < list[2].chips) swap(list, 0, 2);
+      else swap(list, 0, 1);
+    }
+
+    for(var i = 0; i < list.length; i++){
+      var data = list[i];
+      console.log("The " , data.key , " has chips " , data.chips);
+      var newScoreRow = $("<tr/>");
+      newScoreRow.append($("<td/>").text(data['key']));
+      newScoreRow.append($("<td/>").text(data['chips']));
+      $("#leaderboardTable").append(newScoreRow);
+      flag = 1;
+    }  
+  });
 </script>
 </body>
 </html>
