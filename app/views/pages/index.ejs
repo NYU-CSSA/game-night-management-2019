@@ -14,7 +14,7 @@
        $.ajax({ url: "/topplayers", success: function(data) {
             var table = "<table class='table table-striped' style='font-size:20px;'><thead align='center'><tr><th>Player Number</th><th>Chips</th></tr></thead>";
             for(var i=0;i<data.length;i++) {
-              table += "<tr><td>" + data[i].playerNum + "</td><td>" + data[i].chips + "</td></tr>";
+              table += "<tr><td id='playerNumLeaderBoard'>" + data[i].playerNum + "</td><td id='chipLeaderBoard'>" + data[i].chips + "</td></tr>";
             }
             table += "</table>";
             $('#leaderboard').html(table);

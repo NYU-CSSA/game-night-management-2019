@@ -158,7 +158,7 @@ module.exports = function(app, passport) {
             return;
           }
 
-          tournamentAmount += 500;
+          tournamentAmount += 50;
           res.redirect('operation?playerNum=' + playerId + '&message=' + 'Successfully enter this user into tournament');
         });
       }
