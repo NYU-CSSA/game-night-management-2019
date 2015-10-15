@@ -40,7 +40,7 @@
 
 	<div class="container">
 		<form id="frmFindPlayer" role="form" method="post" action="/addmoney">
-			<input type="hidden" value=<%= player.id %> name="uid" />
+			<input type="hidden" value=<%= uid %> name="uid" />
 	        <div class="form-group">
 	            <label for="txtAddMoney">Add Money</label>
 	            <input type="number" class="form-control" id="txtAddMoney" placeholder="Enter Amount" name="addmoneyamount" />
@@ -49,7 +49,7 @@
     	</form>
 
     	<form id="frmFindPlayer" role="form" method="post" action="/submoney">
-    		<input type="hidden" value=<%= player.id %> name="uid" />
+    		<input type="hidden" value=<%= uid %> name="uid" />
 	        <div class="form-group">
 	            <label for="txtTakeOutMoney">Take Out Money</label>
 	            <input type="number" class="form-control" id="txtTakeOutMoney" placeholder="Enter Amount" name="takeoutmoneyamount" />
@@ -62,13 +62,13 @@
 
 	<div class="container">
     	<form id="frmEnterTexas" role="form" method="post" action="/entertournament">
-    		<input type="hidden" value=<%= player.id %> name="uid" />
+    		<input type="hidden" value=<%= uid %> name="uid" />
         	<button type="submit" class="btn btn-danger btn-block">ENTER TEXAS TOURNAMENT</button>
     	</form>
 	</div>
 
 	<div class="container">
-		<h4>Current Chips in Tournament Pool: <%= tournamentsLeft %></h4> 
+		<h4>Current Chips in Tournament Pool: <%= tournamentAmount %></h4> 
 	</div>
 
 

@@ -1,5 +1,6 @@
 
 var Player = require("./models/player");
+var tournamentAmount = 0;
 
 module.exports = function(app, passport) {
   app.get('/', function(req, res) {
@@ -15,7 +16,6 @@ module.exports = function(app, passport) {
   });
 
   app.get('/registration',isLoggedIn,function(req,res){
-    console.log("Authenticated user with uid:", authData.uid);
     var op = req.query.op;
     var uid = req.query.uid;
     if (!op || !uid) {
@@ -32,11 +32,46 @@ module.exports = function(app, passport) {
   });
 
   app.post('/registration',isLoggedIn,function(req,res){
-    
+    var uid = req.body.playNo;
+    if (uid) {
+      Player.findOne({'playerNum':uid},function(err,user){
+        if (err) {
+          console.log(err);
+          return;
+        }
+
+        if (user) {
+          // update to existing user
+          if (user.refillsLeft > 0) {
+            Player.update({'playerNum':uid},{$inc:{'chips':100,'refillsLeft':-1}},{},function(err,user){
+              if (err) {
+                return res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Error adding chips"}); 
+              }
+              res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Successfully added 100 chips to user " + uid}); 
+            });
+          } else {
+            res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "This user got no refills left."}); 
+          }
+        } else {
+          // create a user
+          var player = new Player();
+          player.playerNum = uid;
+          player.save(function(err){
+            if (err) {
+              throw err;
+            }
+            res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Successfully created user " + uid}); 
+          });
+        }
+      });
+    } else {
+      res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "No player number"}); 
+    }
   });
 
   app.get('/operation',isLoggedIn,function(req,res){
     var playerid = req.query.playerNum;
+    console.log(playerid);
     if (playerid) {
       Player.findOne({'playerNum':playerid},function(err,user){
         if (err) {
@@ -46,20 +81,73 @@ module.exports = function(app, passport) {
         if (user) {
           res.render('pages/operation',{
               player:user,
+              uid:playerid,
               playerNum:user.playerNum,
               chips:user.chips,
               refillsLeft:user.refillsLeft,
-              tournamentsLeft : user.tournamentsLeft,
-              loggedin:isLoggedIn()
+              tournamentAmount : tournamentAmount,
+              loggedin:true
           });
         } else {
-          res.render('pages/operation',{player:null,loggedin:req.isAuthenticated()});
+          res.render('pages/operation',{player:null,loggedin:true});
         }
       });
     } else {
-      res.render('pages/operation',{player:null,loggedin:req.isAuthenticated()});
+      res.render('pages/operation',{player:null,loggedin:true});
     }
-  })
+  });
+
+  app.post('/addmoney', function(req, res) {
+    var addAmount = parseInt(req.body.addmoneyamount);
+    var playerId = req.body.uid;
+    Player.update({'playerNum':playerId},{$inc:{'chips':addAmount}},function(err,user){
+      if (err) {
+        console.log(err);
+        return;
+      }
+      res.redirect('operation?playerNum=' + playerId);
+    });
+  });
+
+  app.post('/submoney', function(req, res) {
+    var subAmount = -1*parseInt(req.body.takeoutmoneyamount); // this is the most unreadable naming ever
+    var playerId = req.body.uid;
+    Player.update({'playerNum':playerId},{$inc:{'chips':subAmount}},function(err,user){
+      if (err) {
+        console.log(err);
+        return;
+      }
+      res.redirect('operation?playerNum=' + playerId);
+    });
+  });
+
+  app.post('/entertournament', function(req, res) {
+    var playerId = req.body.uid;
+    console.log(playerId);
+    var query = {'playerNum':playerId};
+    Player.findOne(query,function(err,user){
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      if (user.chips < 50) {
+        res.redirect('operation?playerNum=' + playerId + '&message=' + 'this user does not have sufficient chips');
+      } else if (user.tournamentsLeft <= 0) {
+        res.redirect('operation?playerNum=' + playerId + '&message=' + 'this user has already entered the tournament too many times');
+      }else {
+        Player.update(query,{$inc:{'chips':-50,'tournamentsLeft':-1}},function(err,user){
+          if (err) {
+            console.log(err);
+            return;
+          }
+
+          tournamentAmount += 500;
+          res.redirect('operation?playerNum=' + playerId + '&message=' + 'Successfully enter this user into tournament');
+        });
+      }
+    });
+  });
 
   // process the signup form
   app.post('/signup', passport.authenticate('local-signup', {
@@ -73,7 +161,6 @@ module.exports = function(app, passport) {
       failureRedirect : '/', // redirect back to the signup page if there is an error
       failureFlash : true // allow flash messages
   }));
-
 }
 
 // route middleware to make sure a user is logged in
