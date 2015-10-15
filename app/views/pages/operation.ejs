@@ -42,7 +42,7 @@
 		<form id="frmFindPlayer" role="form" method="post" action="/addmoney">
 			<input type="hidden" value=<%= uid %> name="uid" />
 	        <div class="form-group">
-	            <label for="txtAddMoney">Add Money</label>
+	            <label for="txtAddMoney">Add Money(下桌的时候！)</label>
 	            <input type="number" class="form-control" id="txtAddMoney" placeholder="Enter Amount" name="addmoneyamount" min="0" />
 	        </div>
 	        <button type="submit" class="btn btn-default btn-block">Add</button>
@@ -51,7 +51,7 @@
     	<form id="frmFindPlayer" role="form" method="post" action="/submoney">
     		<input type="hidden" value=<%= uid %> name="uid" />
 	        <div class="form-group">
-	            <label for="txtTakeOutMoney">Take Out Money</label>
+	            <label for="txtTakeOutMoney">Take Out Money(上桌的时候！)</label>
 	            <input type="number" class="form-control" id="txtTakeOutMoney" placeholder="Enter Amount" name="takeoutmoneyamount" min="0" max=<%= chips %> />
 	        </div>
 	        <button type="submit" class="btn btn-default btn-block">Take Out</button>
