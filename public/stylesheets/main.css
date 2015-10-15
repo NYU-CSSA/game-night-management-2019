@@ -28,3 +28,7 @@
 .space {
   min-height: 50px;
 }
+
+#playerInfo {
+  margin-top: 20px;
+}
