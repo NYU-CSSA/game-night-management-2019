@@ -43,7 +43,7 @@
 			<input type="hidden" value=<%= uid %> name="uid" />
 	        <div class="form-group">
 	            <label for="txtAddMoney">Add Money</label>
-	            <input type="number" class="form-control" id="txtAddMoney" placeholder="Enter Amount" name="addmoneyamount" />
+	            <input type="number" class="form-control" id="txtAddMoney" placeholder="Enter Amount" name="addmoneyamount" min="0" />
 	        </div>
 	        <button type="submit" class="btn btn-default btn-block">Add</button>
     	</form>
@@ -52,7 +52,7 @@
     		<input type="hidden" value=<%= uid %> name="uid" />
 	        <div class="form-group">
 	            <label for="txtTakeOutMoney">Take Out Money</label>
-	            <input type="number" class="form-control" id="txtTakeOutMoney" placeholder="Enter Amount" name="takeoutmoneyamount" />
+	            <input type="number" class="form-control" id="txtTakeOutMoney" placeholder="Enter Amount" name="takeoutmoneyamount" min="0" max=<%= chips %> />
 	        </div>
 	        <button type="submit" class="btn btn-default btn-block">Take Out</button>
     	</form> 

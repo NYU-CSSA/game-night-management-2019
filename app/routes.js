@@ -128,6 +128,7 @@ module.exports = function(app, passport) {
   app.post('/submoney', function(req, res) {
     var subAmount = -1*parseInt(req.body.takeoutmoneyamount); // this is the most unreadable naming ever
     var playerId = req.body.uid;
+
     Player.update({'playerNum':playerId},{$inc:{'chips':subAmount}},function(err,user){
       if (err) {
         console.log(err);
