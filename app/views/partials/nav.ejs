@@ -8,7 +8,7 @@
     <ul class="nav navbar-nav navbar-right">
       <% if (loggedin) { %>
           <li class="navbar-right">
-          <a href="/login">Sign out</a>
+          <a href="/signout">Sign out</a>
         </li>
         <li class="navbar-right">
           <a href="/registration">Registration</a>
@@ -16,15 +16,14 @@
         <li class="navbar-right">
           <a href="/operation">Operation</a>
         </li>
+        <li class="navbar-right">
+          <a href="/signup">Sign up</a>
+        </li>
       <% } else{ %>
         <li class="navbar-right">
           <a href="/login">Log in</a>
         </li>
-        <li class="navbar-right">
-          <a href="/signup">Sign up</a>
-        </li>
-    <% } %>
-
+      <% } %>
     </ul>
   </div>
 </nav>

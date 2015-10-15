@@ -3,22 +3,29 @@
 <head>
   <% include ../partials/header.ejs %>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-  <style>
-    table, th, td, tr {
-      border: 1px solid black;
-    }
-  </style>
 </head>
 
 <body>
 
   <% include ../partials/nav.ejs %>
-
-<div class="jumbotron text-center">
-  <div class="container">
-    <h1>House of Cards</h1>
-    <p>10/15 Thu 7p.m. - 10p.m.</p>
-    <p>10th Floor, Kimmel Center, Rosenthal Pavilion</p>
+<script>
+  (function poll() {
+    setTimeout(function() {
+       $.ajax({ url: "/topplayers", success: function(data) {
+            var table = "<table class='table table-striped' style='font-size:20px;'><thead align='center'><tr><th>Player Number</th><th>Chips</th></tr></thead>";
+            for(var i=0;i<data.length;i++) {
+              table += "<tr><td>" + data[i].playerNum + "</td><td>" + data[i].chips + "</td></tr>";
+            }
+            table += "</table>";
+            $('#leaderboard').html(table);
+       }, dataType: "json", complete: poll });
+    }, 3000);
+  })();
+</script>
+<div class="text-center">
+  <h3> Leaderboard </h3>
+  <div class="container" id="leaderboard">
+    <h3> Initializing </h3>
   </div>
 </div>
 <div class="container">
@@ -42,61 +49,5 @@
     </div>
   </div> <!-- row -->
 </div>
-<table id="leaderboardTable">
-  <tr>
-    <th>Player</th>
-    <th>Score</th>
-  </tr>
-</table>
-<script type="text/javascript">
-var ref = new Firebase("https://ilovemarshmellow.firebaseio.com");
-  var authData = ref.getAuth();
-  //check client log in status
-  if (authData) {
-    console.log("Authenticated user with uid:", authData.uid);
-  }
-  else{
-    console.log("not logged in");
-  }
-  var swap = function(list, a ,b){
-    var tmp = list[a];
-    list[a] = list[b];
-    list[b] = tmp;
-  };
-  //var scoresRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
-  var scoresRef = new Firebase("https://ilovemarshmellow.firebaseio.com/player");
-  var flag = 0;
-  scoresRef.orderByChild("chips").limitToLast(3).on("value", function(snapshot) {
-    var table = document.getElementById("leaderboardTable");
-    if (flag == 1){
-      table.deleteRow(1);table.deleteRow(1);table.deleteRow(1);
-    }
-    var list = [];
-    snapshot.forEach(function(data) {
-      var key = data.key(), chips = data.val().chips;
-      var obj = {'key' : key, 'chips' : chips};
-      list.push(obj);
-    });
-
-    if (list[0].chips > list[1].chips){
-      if (list[1].chips < list[2].chips) swap(list, 1, 2);
-    }
-    else{
-      if (list[1].chips < list[2].chips) swap(list, 0, 2);
-      else swap(list, 0, 1);
-    }
-
-    for(var i = 0; i < list.length; i++){
-      var data = list[i];
-      console.log("The " , data.key , " has chips " , data.chips);
-      var newScoreRow = $("<tr/>");
-      newScoreRow.append($("<td/>").text(data['key']));
-      newScoreRow.append($("<td/>").text(data['chips']));
-      $("#leaderboardTable").append(newScoreRow);
-      flag = 1;
-    }  
-  });
-
-</script>
 </body>
 </html>

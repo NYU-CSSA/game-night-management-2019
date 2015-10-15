@@ -11,8 +11,13 @@ module.exports = function(app, passport) {
     res.render('pages/login',{message : req.flash('signupMessage'),loggedin:req.isAuthenticated()});
   });
 
-  app.get('/signup', function(req, res) {
+  app.get('/signup',isLoggedIn,function(req, res) {
     res.render('pages/signup', {message : req.flash('signupMessage'),loggedin:req.isAuthenticated()});
+  });
+
+  app.get('/signout',isLoggedIn,function(req,res){
+    req.logout();
+    res.redirect('/');
   });
 
   app.get('/registration',isLoggedIn,function(req,res){
@@ -30,6 +35,17 @@ module.exports = function(app, passport) {
       res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: message}); 
     }
   });
+
+  app.get('/topplayers',function(req,res){
+    console.log("querying topplayers");
+    Player.find({}).sort({'chips':-1}).limit(10).exec(function(err,players){
+      if (err) {
+        console.log(err);
+        return;
+      }
+      res.send(JSON.stringify(players));
+    });
+  })
 
   app.post('/registration',isLoggedIn,function(req,res){
     var uid = req.body.playNo;
