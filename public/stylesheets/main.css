@@ -28,3 +28,11 @@
 .space {
   min-height: 50px;
 }
+
+#playerInfo {
+  margin-top: 20px;
+}
+
+#playerNumLeaderBoard {
+  margin-left: 30px;
+}
