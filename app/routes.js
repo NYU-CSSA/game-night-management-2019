@@ -59,7 +59,7 @@ module.exports = function(app, passport) {
         if (user) {
           // update to existing user
           if (user.refillsLeft > 0) {
-            Player.update({'playerNum':uid},{$inc:{'chips':500'refillsLeft':-1}},{},function(err,user){
+            Player.update({'playerNum':uid},{$inc:{'chips':500,'refillsLeft':-1}},{},function(err,user){
               if (err) {
                 return res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Error adding chips"}); 
               }
