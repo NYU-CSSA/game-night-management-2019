@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var playerSchema = mongoose.Schema({
 	playerNum : String,
 	refillsLeft : {type:Number, default: 3},
-	chips : {type:Number,default:100},
+	chips : {type:Number,default:500},
 	tournamentsLeft : {type:Number,default:3}
 });
 
