@@ -28,7 +28,7 @@ module.exports = function(app, passport) {
     } else {
       var message = null;
       if (op == "add") {
-        message = "added 100 for player " + uid;
+        message = "added 500 for player " + uid;
       } else if (op == "create") {
         message = "created player " + uid;
       }
@@ -59,11 +59,11 @@ module.exports = function(app, passport) {
         if (user) {
           // update to existing user
           if (user.refillsLeft > 0) {
-            Player.update({'playerNum':uid},{$inc:{'chips':100,'refillsLeft':-1}},{},function(err,user){
+            Player.update({'playerNum':uid},{$inc:{'chips':500'refillsLeft':-1}},{},function(err,user){
               if (err) {
                 return res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Error adding chips"}); 
               }
-              res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Successfully added 100 chips to user " + uid}); 
+              res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Successfully added 500 chips to user " + uid}); 
             });
           } else {
             res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "This user got no refills left."}); 
