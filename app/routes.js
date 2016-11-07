@@ -150,7 +150,7 @@ module.exports = function(app, passport) {
 
       if (user.chips < 500) {
         res.redirect('operation?playerNum=' + playerId + '&message=' + 'this user does not have sufficient chips');
-      } else if (user.tournamentsLeft <= 0) {
+      }else if (user.tournamentsLeft <= 0) {
         res.redirect('operation?playerNum=' + playerId + '&message=' + 'this user has already entered the tournament too many times');
       }else {
         Player.update(query,{$inc:{'chips':-100,'tournamentsLeft':-1}},function(err,user){

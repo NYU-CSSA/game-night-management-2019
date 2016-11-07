@@ -1,53 +1,207 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <% include ../partials/header.ejs %>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <title>Game Night Chips Leaderboard</title>
+    <!-- 引入 echarts.js -->
+    <% include ../partials/header.ejs %>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/3.3.1/echarts.min.js"></script>
 </head>
-
 <body>
 
-  <% include ../partials/nav.ejs %>
-<script>
-  (function poll() {
-    setTimeout(function() {
-       $.ajax({ url: "/topplayers", success: function(data) {
-            var table = "<table class='table table-striped' style='font-size:20px;'><thead align='center'><tr><th>Player Number</th><th>Chips</th></tr></thead>";
-            for(var i=0;i<data.length;i++) {
-              table += "<tr><td id='playerNumLeaderBoard'>" + data[i].playerNum + "</td><td id='chipLeaderBoard'>" + data[i].chips + "</td></tr>";
-            }
-            table += "</table>";
-            $('#leaderboard').html(table);
-       }, dataType: "json", complete: poll });
-    }, 3000);
-  })();
-</script>
-<div class="text-center">
-  <h3> Leaderboard </h3>
-  <div class="container" id="leaderboard">
-    <h3> Initializing </h3>
+    <% include ../partials/nav.ejs %>
+
+
+<!-- In case you want to restore the archived table like leaderboard, uncomment the following -->
+<!--    <script>
+    (function poll() {
+      setTimeout(function() {
+         $.ajax({ url: "/topplayers", success: function(data) {
+              var table = "<table class='table table-striped' style='font-size:20px;'><thead align='center'><tr><th>Player Number</th><th>Chips</th></tr></thead>";
+              for(var i=0;i<data.length;i++) {
+                table += "<tr><td id='playerNumLeaderBoard'>" + data[i].playerNum + "</td><td id='chipLeaderBoard'>" + data[i].chips + "</td></tr>";
+              }
+              table += "</table>";
+              $('#leaderboard').html(table);
+         }, dataType: "json", complete: poll });
+      }, 3000);
+    })();
+    </script>
+
+    <div class="text-center">
+    <h3> Leaderboard </h3>
+    <div class="container" id="leaderboard">
+      <h3> Initializing </h3>
+    </div>
+    </div>
+-->
+
+<!-- style="width: 1000px;height:600px;" -->
+    <div class="text-center">
+        <h3> Leaderboard </h3>
+    </div>
+    <div class = "container">
+        <div class="row">
+            <div class="col-md-10 img-responsive" id = "main" style="width: 1000px;height:600px;" >
+
+            </div>
+        </div>
+    </div>
+    <script>
+    (function poll() {
+      setTimeout(function() {
+         $.ajax({ url: "/topplayers", success: function(data) {
+              var player_numbers = [];
+              var player_chips = [];
+              for(var i = data.length - 1; i > -1 ; i--){
+                player_numbers.push(data[i].playerNum.toString())
+                player_chips.push(data[i].chips)
+              }
+              
+
+              var myChart = echarts.init(document.getElementById('main'));
+              var option = {
+                backgroundColor: '#faf6f3',
+                animation: false,
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow',
+                        shadowStyle: {
+                            color: 'rgba(255, 109, 0, 0.1)'
+                        }
+                    }
+                },
+                grid: {
+                    top: 60,
+                    bottom: 30
+                },
+                xAxis: {
+                    type: 'value',
+                    position: 'top',
+                    splitLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color: '#cfc3bd'
+                        }
+                    },
+                },
+                yAxis: {
+                    splitNumber: 25,
+                    type: 'category',
+                    axisLine: {
+                        lineStyle: {
+                            type: 'solid',
+                        }
+                    },
+                    axisLabel: {
+                        show: true,
+                        rotate: 0,
+                        textStyle: {
+                            color: '#682d19'
+                        }
+                    },
+                    axisTick: {
+                        show: true
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color: '#cfc3bd'
+                        }
+                    },
+                    data: player_numbers
+                },
+                series: [{
+                    name: 'Chips',
+                    type: 'bar',
+                    stack: 'User_num',
+                    label: {
+                        normal: {
+                            textStyle: {
+                                color: '#682d19'
+                            },
+                            position: 'left',
+                            show: false,
+                            formatter: '{b}'
+                        }
+                    },
+                    barCategoryGap: 0,
+                    itemStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                                offset: 0,
+                                color: 'transparent'
+                            }, {
+                                offset: 0.5,
+                                color: 'transparent'
+                            }, {
+                                offset: 0.8,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }, {
+                                offset: 0.92,
+                                color: 'rgba(0, 0, 0, 0.08)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(0, 0, 0, 0.2)'
+                            }])
+                        }
+                    },
+                    data: player_chips
+                }, {
+                    type: 'bar',
+                    stack: 'User_num',
+                    silent: true,
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    itemStyle: {
+                        normal: {
+                            color: '#204bad',
+                            shadowColor: 'rgba(0, 0, 0, 0.3)',
+                            shadowBlur: 10,
+                            shadowOffsetX: -4
+                        }
+                    },
+                    barMinHeight: 4
+                }]
+              }
+
+          // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+
+                // $('#leaderboard_2').html(table);
+           }, dataType: "json", complete: poll });
+        }, 3000);
+      })();
+    </script>
+
+   
+
+
+    <div class="container">
+    <hr>
+    <div class="row">
+      <div class="col-md-6">
+        <h3>Buy Tickets</h3>
+        <ul>
+          <li>Price: $5 for NYU students; $10 for Non-NYU students</li>
+          <li>Where: NYU Skirball Ticket Central (556 Laguardian Pl, New York, NY, 10012</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <h3>Prizes</h3>
+        <ul>
+          <li>Beats Pill</li>
+          <li>Beats Headphone</li>
+          <li>One-year pass to CSSA events</li>
+          <li>Gift cards</li>
+        </ul>
+      </div>
+    </div> <!-- row -->
   </div>
-</div>
-<div class="container">
-  <hr>
-  <div class="row">
-    <div class="col-md-6">
-      <h3>Buy Tickets</h3>
-      <ul>
-        <li>Price: $5 for NYU students; $10 for Non-NYU students</li>
-        <li>Where: NYU Skirball Ticket Central (556 Laguardian Pl, New York, NY, 10012</li>
-      </ul>
-    </div>
-    <div class="col-md-6">
-      <h3>Prizes</h3>
-      <ul>
-        <li>Beats Pill</li>
-        <li>Beats Headphone</li>
-        <li>One-year pass to CSSA events</li>
-        <li>Gift cards</li>
-      </ul>
-    </div>
-  </div> <!-- row -->
-</div>
+
+
+
+
 </body>
 </html>
