@@ -151,6 +151,7 @@
                     data: player_chips
                 }, {
                     type: 'bar',
+                    name: ' ',
                     stack: 'User_num',
                     silent: true,
                     data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -166,10 +167,10 @@
                 }]
               }
 
-          // 使用刚指定的配置项和数据显示图表。
+
             myChart.setOption(option);
 
-                // $('#leaderboard_2').html(table);
+
            }, dataType: "json", complete: poll });
         }, 3000);
       })();
