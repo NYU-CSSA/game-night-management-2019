@@ -8,7 +8,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/3.3.1/echarts.min.js"></script>
 </head>
-<body>
+<body class = "indexBody" bgcolor="#E6E6FA">
 
     <% include ../partials/nav.ejs %>
 
@@ -39,11 +39,11 @@
 
 <!-- style="width: 1000px;height:600px;" -->
     <div class="text-center">
-        <h3> Leaderboard </h3>
+        <h3  color = 'eee'> Leaderboard </h3>
     </div>
     <div class = "container">
         <div class="row">
-            <div class="col-md-10 img-responsive" id = "main" style="width: 1000px;height:600px;" >
+            <div class="col-md-10 img-responsive" id = "main" style="width: 1200px;height:600px;" >
 
             </div>
         </div>
@@ -62,7 +62,7 @@
 
               var myChart = echarts.init(document.getElementById('main'));
               var option = {
-                backgroundColor: '#faf6f3',
+                backgroundColor: '#333',//'#faf6f3',
                 animation: false,
                 tooltip: {
                     trigger: 'axis',
@@ -83,7 +83,7 @@
                     splitLine: {
                         lineStyle: {
                             type: 'solid',
-                            color: '#cfc3bd'
+                            color: '#666'
                         }
                     },
                 },
@@ -99,7 +99,7 @@
                         show: true,
                         rotate: 0,
                         textStyle: {
-                            color: '#682d19'
+                            color: '#eee'
                         }
                     },
                     axisTick: {
@@ -108,11 +108,12 @@
                     splitLine: {
                         lineStyle: {
                             type: 'solid',
-                            color: '#cfc3bd'
+                            color: '#666'
                         }
                     },
                     data: player_numbers
                 },
+                animationDuration: 2000,
                 series: [{
                     name: 'Chips',
                     type: 'bar',
@@ -120,51 +121,66 @@
                     label: {
                         normal: {
                             textStyle: {
-                                color: '#682d19'
+                                color: '#666'
                             },
-                            position: 'left',
+                            position: 'right',
                             show: false,
                             formatter: '{b}'
                         }
                     },
-                    barCategoryGap: 0,
+                    barGap: 0.1,
+                    barCategoryGap: 0.01,
                     itemStyle: {
                         normal: {
-                            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
-                                offset: 0,
-                                color: 'transparent'
-                            }, {
-                                offset: 0.5,
-                                color: 'transparent'
-                            }, {
-                                offset: 0.8,
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }, {
-                                offset: 0.92,
-                                color: 'rgba(0, 0, 0, 0.08)'
-                            }, {
-                                offset: 1,
-                                color: 'rgba(0, 0, 0, 0.2)'
-                            }])
+                            // color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                            //     offset: 0,
+                            //     color: 'transparent'
+                            // }, {
+                            //     offset: 0.3,
+                            //     color: 'transparent'
+                            // }, {
+                            //     offset: 0.65,
+                            //     color: 'rgba(32, 75, 173, 0.05)'
+                            // }, {
+                            //     offset: 0.85,
+                            //     color: 'rgba(32, 75, 173, 0.08)'
+                            // }, {
+                            //     offset: 1,
+                            //     color: 'rgba(32, 75, 173, 0.2)'
+                            // }])
+
+                            color: function(params) {
+                        // build a color map as your need.
+                                    var colorList = [
+                                      '#DF6C74','#DDA16B','#D9DC69','#99DB68',
+                                      '#66D974','#65D8B1','#63BED7',
+                                      '#627DD5','#8360D4','#C25ED2'
+                                    ];
+                                    return colorList[params.dataIndex]
+                            },
+                            label: {
+                                show: true,
+                                potision: "right",
+                                color: '#eee'
+                            },
+                            shadowBlur: 80,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
                         }
                     },
-                    data: player_chips
-                }, {
-                    type: 'bar',
-                    name: ' ',
-                    stack: 'User_num',
-                    silent: true,
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    itemStyle: {
-                        normal: {
-                            color: '#204bad',
-                            shadowColor: 'rgba(0, 0, 0, 0.3)',
-                            shadowBlur: 10,
-                            shadowOffsetX: -4
-                        }
-                    },
-                    barMinHeight: 4
-                }]
+                    data: player_chips,
+                    animationDelay: 0,
+                    animationEasing: 'linear',
+                    animationDuration: 1200,
+                    
+                }],
+                animationEasing: 'elasticOut',
+                animationEasingUpdate: 'elasticOut',
+                animationDelay: function (idx) {
+                    return idx * 20;
+                },
+                animationDelayUpdate: function (idx) {
+                    return idx * 20;
+                }
               }
 
 

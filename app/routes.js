@@ -1,4 +1,3 @@
-
 var Player = require("./models/player");
 var tournamentAmount = 0;
 
@@ -20,9 +19,10 @@ module.exports = function(app, passport) {
     res.redirect('/');
   });
 
+
   app.get('/registration',isLoggedIn,function(req,res){
-    var op = req.query.op;
-    var uid = req.query.uid;
+    var op = req.query.op; // op is the button of Creat/Add
+    var uid = req.query.uid; // uid is the input ID
     if (!op || !uid) {
       res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: null});
     } else {
@@ -32,7 +32,7 @@ module.exports = function(app, passport) {
       } else if (op == "create") {
         message = "created player " + uid;
       }
-      res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: message}); 
+      res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: message})
     }
   });
 
@@ -55,18 +55,21 @@ module.exports = function(app, passport) {
           console.log(err);
           return;
         }
+          //Successfully created user 15, No player number
+          //Successfully added 500 chips to user 10
+          //This user got no refills left.
 
         if (user) {
-          // update to existing user
+          // update an existing user
           if (user.refillsLeft > 0) {
             Player.update({'playerNum':uid},{$inc:{'chips':500,'refillsLeft':-1}},{},function(err,user){
               if (err) {
-                return res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Error adding chips"}); 
+                return res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Error adding chips"});
               }
-              res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Successfully added 500 chips to user " + uid}); 
+              res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Successfully added 500 chips to user " + uid});
             });
           } else {
-            res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "This user got no refills left."}); 
+            res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "This user got no refill left."});
           }
         } else {
           // create a user
@@ -76,12 +79,12 @@ module.exports = function(app, passport) {
             if (err) {
               throw err;
             }
-            res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Successfully created user " + uid}); 
+            res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "Successfully created user " + uid});
           });
         }
       });
     } else {
-      res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "No player number"}); 
+      res.render('pages/registration', {loggedin : req.isAuthenticated(), msg: "No player number"});
     }
   });
 
@@ -114,28 +117,37 @@ module.exports = function(app, passport) {
   });
 
   app.post('/addmoney', function(req, res) {
-    var addAmount = parseInt(req.body.addmoneyamount);
-    var playerId = req.body.uid;
-    Player.update({'playerNum':playerId},{$inc:{'chips':addAmount}},function(err,user){
-      if (err) {
-        console.log(err);
-        return;
-      }
+      var addAmount = parseInt(req.body.addmoneyamount);
+      if (addAmount >= -1000000) { // in the case of NaN error. in that case, go to operation page
+           // parseInt, transform a string to int.
+          var playerId = req.body.uid;
+          Player.update({'playerNum': playerId}, {$inc: {'chips': addAmount}}, function (err, user) {
+              if (err) {
+                  console.log(err);
+                  return;
+              }
+              res.redirect('operation?playerNum=' + playerId);
+          });
+      }else{
       res.redirect('operation?playerNum=' + playerId);
-    });
+      }
   });
 
+// $inc, Mongodb, add a certain number
   app.post('/submoney', function(req, res) {
-    var subAmount = -1*parseInt(req.body.takeoutmoneyamount); // this is the most unreadable naming ever
-    var playerId = req.body.uid;
-
-    Player.update({'playerNum':playerId},{$inc:{'chips':subAmount}},function(err,user){
-      if (err) {
-        console.log(err);
-        return;
+      var subAmount = -1 * parseInt(req.body.takeoutmoneyamount); // this is the most unreadable naming ever
+      if (subAmount <= 1000000) {
+          var playerId = req.body.uid;
+          Player.update({'playerNum': playerId}, {$inc: {'chips': subAmount}}, function (err, user) {
+              if (err) {
+                  console.log(err);
+                  return;
+              }
+              res.redirect('operation?playerNum=' + playerId);
+          });
+      }else{
+          res.redirect('operation?playerNum=' + playerId);
       }
-      res.redirect('operation?playerNum=' + playerId);
-    });
   });
 
   app.post('/entertournament', function(req, res) {
@@ -158,7 +170,6 @@ module.exports = function(app, passport) {
             console.log(err);
             return;
           }
-
           tournamentAmount += 100;
           res.redirect('operation?playerNum=' + playerId + '&message=' + 'Successfully enter this user into tournament');
         });
