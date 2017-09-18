@@ -7,3 +7,5 @@ $ cd game-night
 $ npm install
 $ npm start
 ```
+## Deployment
+https://nyucssa-gamenight.herokuapp.com/
