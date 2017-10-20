@@ -38,7 +38,7 @@ module.exports = function(app, passport) {
 
   app.get('/topplayers',function(req,res){
     console.log("querying topplayers");
-    Player.find({}).exec(function(err,players){
+    Player.find({}).sort({'chips':-1}).limit(10).exec(function(err,players){
       if (err) {
         console.log(err);
         res.status(500).send(err);
@@ -46,7 +46,7 @@ module.exports = function(app, passport) {
       }
       res.status(200).send(JSON.stringify(players) || {});
     });
-  })
+  });
 
   app.post('/registration',isLoggedIn,function(req,res){
     var uid = req.body.playNo;
