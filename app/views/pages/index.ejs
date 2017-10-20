@@ -8,10 +8,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/3.3.1/echarts.min.js"></script>
 </head>
-<body class = "indexBody" bgcolor="#E6E6FA">
+<body class="indexBody" bgcolor="#E6E6FA">
 
-    <% include ../partials/nav.ejs %>
-
+<% include ../partials/nav.ejs %>
 
 <!-- In case you want to restore the archived table like leaderboard, uncomment the following -->
 <!--    <script>
@@ -28,7 +27,7 @@
       }, 3000);
     })();
     </script>
-
+w
     <div class="text-center">
     <h3> Leaderboard </h3>
     <div class="container" id="leaderboard">
@@ -38,186 +37,182 @@
 -->
 
 <!-- style="width: 1000px;height:600px;" -->
-    <div class="text-center">
-        <h3  color = 'eee'> Leaderboard </h3>
-    </div>
-    <div class = "container">
-        <div class="row">
-            <div class="col-md-10 img-responsive" id = "main" style="width: 1200px;height:600px;" >
+<div class="text-center">
+    <h3 color='eee'> Leaderboard </h3>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 img-responsive" id="main" style="width: 1200px;height:600px;">
 
-            </div>
         </div>
     </div>
-    <script>
+</div>
+<script>
     (function poll() {
-      setTimeout(function() {
-         $.ajax({ url: "/topplayers", success: function(data) {
-              var player_numbers = [];
-              var player_chips = [];
-              for(var i = data.length - 1; i > -1 ; i--){
-                player_numbers.push(data[i].playerNum.toString())
-                player_chips.push(data[i].chips)
-              }
-              
+        setTimeout(function () {
+            $.ajax({
+                url: "/topplayers", success: function (data) {
+                    var player_numbers = [];
+                    var player_chips = [];
+                    for (var i = data.length - 1; i > -1; i--) {
+                        player_numbers.push(data[i].playerNum.toString())
+                        player_chips.push(data[i].chips)
+                    }
 
-              var myChart = echarts.init(document.getElementById('main'));
-              var option = {
-                backgroundColor: '#333',//'#faf6f3',
-                animation: false,
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow',
-                        shadowStyle: {
-                            color: 'rgba(255, 109, 0, 0.1)'
+
+                    var myChart = echarts.init(document.getElementById('main'));
+                    var option = {
+                        backgroundColor: '#333',//'#faf6f3',
+                        animation: false,
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow',
+                                shadowStyle: {
+                                    color: 'rgba(255, 109, 0, 0.1)'
+                                }
+                            }
+                        },
+                        grid: {
+                            top: 60,
+                            bottom: 30
+                        },
+                        xAxis: {
+                            type: 'value',
+                            position: 'top',
+                            splitLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#666'
+                                }
+                            }
+                        },
+                        yAxis: {
+                            splitNumber: 25,
+                            type: 'category',
+                            axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                }
+                            },
+                            axisLabel: {
+                                show: true,
+                                rotate: 0,
+                                textStyle: {
+                                    color: '#eee'
+                                }
+                            },
+                            axisTick: {
+                                show: true
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#666'
+                                }
+                            },
+                            data: player_numbers
+                        },
+                        animationDuration: 2000,
+                        series: [{
+                            name: 'Chips',
+                            type: 'bar',
+                            stack: 'User_num',
+                            label: {
+                                normal: {
+                                    textStyle: {
+                                        color: '#666'
+                                    },
+                                    position: 'right',
+                                    show: false,
+                                    formatter: '{b}'
+                                }
+                            },
+                            barGap: 0.1,
+                            barCategoryGap: 0.01,
+                            itemStyle: {
+                                normal: {
+                                    // color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                                    //     offset: 0,
+                                    //     color: 'transparent'
+                                    // }, {
+                                    //     offset: 0.3,
+                                    //     color: 'transparent'
+                                    // }, {
+                                    //     offset: 0.65,
+                                    //     color: 'rgba(32, 75, 173, 0.05)'
+                                    // }, {
+                                    //     offset: 0.85,
+                                    //     color: 'rgba(32, 75, 173, 0.08)'
+                                    // }, {
+                                    //     offset: 1,
+                                    //     color: 'rgba(32, 75, 173, 0.2)'
+                                    // }])
+
+                                    color: function (params) {
+                                        // build a color map as your need.
+                                        var colorList = [
+                                            '#DF6C74', '#DDA16B', '#D9DC69', '#99DB68',
+                                            '#66D974', '#65D8B1', '#63BED7',
+                                            '#627DD5', '#8360D4', '#C25ED2'
+                                        ];
+                                        return colorList[params.dataIndex]
+                                    },
+                                    label: {
+                                        show: true,
+                                        potision: "right",
+                                        color: '#eee'
+                                    },
+                                    shadowBlur: 80,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            },
+                            data: player_chips,
+                            animationDelay: 0,
+                            animationEasing: 'linear',
+                            animationDuration: 1200
+                        }],
+                        animationEasing: 'elasticOut',
+                        animationEasingUpdate: 'elasticOut',
+                        animationDelay: function (idx) {
+                            return idx * 20;
+                        },
+                        animationDelayUpdate: function (idx) {
+                            return idx * 20;
                         }
                     }
-                },
-                grid: {
-                    top: 60,
-                    bottom: 30
-                },
-                xAxis: {
-                    type: 'value',
-                    position: 'top',
-                    splitLine: {
-                        lineStyle: {
-                            type: 'solid',
-                            color: '#666'
-                        }
-                    },
-                },
-                yAxis: {
-                    splitNumber: 25,
-                    type: 'category',
-                    axisLine: {
-                        lineStyle: {
-                            type: 'solid',
-                        }
-                    },
-                    axisLabel: {
-                        show: true,
-                        rotate: 0,
-                        textStyle: {
-                            color: '#eee'
-                        }
-                    },
-                    axisTick: {
-                        show: true
-                    },
-                    splitLine: {
-                        lineStyle: {
-                            type: 'solid',
-                            color: '#666'
-                        }
-                    },
-                    data: player_numbers
-                },
-                animationDuration: 2000,
-                series: [{
-                    name: 'Chips',
-                    type: 'bar',
-                    stack: 'User_num',
-                    label: {
-                        normal: {
-                            textStyle: {
-                                color: '#666'
-                            },
-                            position: 'right',
-                            show: false,
-                            formatter: '{b}'
-                        }
-                    },
-                    barGap: 0.1,
-                    barCategoryGap: 0.01,
-                    itemStyle: {
-                        normal: {
-                            // color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
-                            //     offset: 0,
-                            //     color: 'transparent'
-                            // }, {
-                            //     offset: 0.3,
-                            //     color: 'transparent'
-                            // }, {
-                            //     offset: 0.65,
-                            //     color: 'rgba(32, 75, 173, 0.05)'
-                            // }, {
-                            //     offset: 0.85,
-                            //     color: 'rgba(32, 75, 173, 0.08)'
-                            // }, {
-                            //     offset: 1,
-                            //     color: 'rgba(32, 75, 173, 0.2)'
-                            // }])
 
-                            color: function(params) {
-                        // build a color map as your need.
-                                    var colorList = [
-                                      '#DF6C74','#DDA16B','#D9DC69','#99DB68',
-                                      '#66D974','#65D8B1','#63BED7',
-                                      '#627DD5','#8360D4','#C25ED2'
-                                    ];
-                                    return colorList[params.dataIndex]
-                            },
-                            label: {
-                                show: true,
-                                potision: "right",
-                                color: '#eee'
-                            },
-                            shadowBlur: 80,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    },
-                    data: player_chips,
-                    animationDelay: 0,
-                    animationEasing: 'linear',
-                    animationDuration: 1200,
-                    
-                }],
-                animationEasing: 'elasticOut',
-                animationEasingUpdate: 'elasticOut',
-                animationDelay: function (idx) {
-                    return idx * 20;
-                },
-                animationDelayUpdate: function (idx) {
-                    return idx * 20;
-                }
-              }
+                    myChart.setOption(option);
 
 
-            myChart.setOption(option);
-
-
-           }, dataType: "json", complete: poll });
+                }, dataType: "json", complete: poll
+            });
         }, 3000);
-      })();
-    </script>
-
-   
+    })();
+</script>
 
 
-    <div class="container">
+<div class="container">
     <hr>
     <div class="row">
-      <div class="col-md-6">
-        <h3>Buy Tickets</h3>
-        <ul>
-          <li>Price: $5 for NYU students; $10 for Non-NYU students</li>
-          <li>Where: NYU Skirball Ticket Central (556 Laguardian Pl, New York, NY, 10012</li>
-        </ul>
-      </div>
-      <div class="col-md-6">
-        <h3>Prizes</h3>
-        <ul>
-          <li>Beats Pill</li>
-          <li>Beats Headphone</li>
-          <li>One-year pass to CSSA events</li>
-          <li>Gift cards</li>
-        </ul>
-      </div>
+        <div class="col-md-6">
+            <h3>Buy Tickets</h3>
+            <ul>
+                <li>Price: $5 for NYU students; $10 for Non-NYU students</li>
+                <li>Where: NYU Skirball Ticket Central (556 Laguardian Pl, New York, NY, 10012</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h3>Prizes</h3>
+            <ul>
+                <li>Beats Pill</li>
+                <li>Beats Headphone</li>
+                <li>One-year pass to CSSA events</li>
+                <li>Gift cards</li>
+            </ul>
+        </div>
     </div> <!-- row -->
-  </div>
-
-
+</div>
 
 
 </body>
