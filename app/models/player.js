@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-
+// const, let.
 // define the schema for our user model
 var playerSchema = mongoose.Schema({
 	playerNum : String,
