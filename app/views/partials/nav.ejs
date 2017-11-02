@@ -1,29 +1,37 @@
 <nav class="navbar navbar-default navbar-static-top navbar-inverse">
-  <div class="container">
-    <ul class="nav navbar-nav">
-      <li class="active">
-        <a href="/">Game Night</a>
-      </li>
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
-      <% if (loggedin) { %>
-          <li class="navbar-right">
-          <a href="/signout">Sign out</a>
-        </li>
-        <li class="navbar-right">
-          <a href="/registration">Registration</a>
-        </li>
-        <li class="navbar-right">
-          <a href="/operation">Operation</a>
-        </li>
-        <li class="navbar-right">
-          <a href="/signup">Sign up</a>
-        </li>
-      <% } else{ %>
-        <li class="navbar-right">
-          <a href="/login">Log in</a>
-        </li>
-      <% } %>
-    </ul>
-  </div>
+    <div class="container">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <a href="/">Game Night</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <% if (loggedin) { %>
+                <li class="navbar-right">
+                    <a href="/signout">Sign out</a>
+                </li>
+
+                <li class="navbar-right">
+                    <a href="/registration">Registration</a>
+                </li>
+                <li class="navbar-right">
+                    <a href="/operation">Operation</a>
+                </li>
+                <li class="navbar-right">
+                    <a href="/signup">Sign up</a>
+                </li>
+                <% } else{ %>
+                <li class="navbar-right">
+                    <a href="/login">Log in</a>
+                </li>
+            <% } %>
+
+            <% if (!loggedin) { %>
+                <!--<li class="navbar-right">-->
+                    <!--<a href="/signup">Sign up</a>-->
+                <!--</li>-->
+            <% } %>
+
+        </ul>
+    </div>
 </nav>

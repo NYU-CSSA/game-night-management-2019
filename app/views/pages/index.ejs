@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8">
     <title>Game Night Chips Leaderboard</title>
-    <!-- 引入 echarts.js -->
     <% include ../partials/header.ejs %>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/3.3.1/echarts.min.js"></script>
@@ -43,10 +42,10 @@ w
 <div class="container">
     <div class="row">
         <div class="col-md-10 img-responsive" id="main" style="width: 1200px;height:600px;">
-
         </div>
     </div>
 </div>
+
 <script>
     (function poll() {
         setTimeout(function () {
@@ -58,7 +57,6 @@ w
                         player_numbers.push(data[i].playerNum.toString())
                         player_chips.push(data[i].chips)
                     }
-
 
                     var myChart = echarts.init(document.getElementById('main'));
                     var option = {
@@ -181,10 +179,7 @@ w
                             return idx * 20;
                         }
                     }
-
                     myChart.setOption(option);
-
-
                 }, dataType: "json", complete: poll
             });
         }, 3000);
