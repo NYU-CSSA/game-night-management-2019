@@ -1,6 +1,16 @@
 var mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost:27017/cssa-game-night'); // test connection with mongodb
+// 'url':'mongodb://daimingzhong:123456@ds125555.mlab.com:25555/test-1',
+
+mongoose.connect(configDB.url);
+
+console.log("mongoose connection status: " + mongoose.connection.readyState + ". // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting");
+
+
+var configDB;
+configDB.url;
+mongoose.connect(configDB.url); // connect to our database
 console.log("mongoose connection status: " + mongoose.connection.readyState + ". // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting");
 
 
