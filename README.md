@@ -28,14 +28,10 @@ $ npm start // run index.js
 ## 4. Deploy to Heroku
 ```
 $ heroku login
-$ heroku git:clone -a cssa-game-night
-$ cd cssa-game-night
-$ git add .
-$ git commit -am "make it better"
 $ git push heroku master
 ```
 
 
 ## Website:
-https://nyucssa-gamenight.herokuapp.com/
+https://nyucssa-gamenight.herokuapp.com/  
 https://cssa-game-night.herokuapp.com/
