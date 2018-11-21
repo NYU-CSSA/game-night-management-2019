@@ -1,5 +1,7 @@
 # Game Night Web App
-# game night 2018 add red/blue teams, please rever the commit if you want to general function of create/operate players
+game night 2018 add red/blue teams, please revert the commit if you want to general function of create/operate players
+please aquire an monogoDB and config the database url in config/database.js
+Mlab is very handy: https://mlab.com/
 
 ## 1. Software Preparation
 ```
