@@ -1,4 +1,5 @@
 # Game Night Web App
+# game night 2018 add red/blue teams, please rever the commit if you want to general function of create/operate players
 
 ## 1. Software Preparation
 ```
@@ -33,5 +34,9 @@ $ git push heroku master
 
 
 ## Website:
+By 2017:
 https://nyucssa-gamenight.herokuapp.com/  
 https://cssa-game-night.herokuapp.com/
+
+2018: 
+https://gamenight-leaderboard.herokuapp.com/
