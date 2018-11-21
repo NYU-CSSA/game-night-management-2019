@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 // define the schema for our user model
 var playerSchema = mongoose.Schema({
 	playerNum : String,
+	team:String,
 	refillsLeft : {type:Number, default: 2},
 	chips : {type:Number,default:500},
 	tournamentsLeft : {type:Number,default:3}

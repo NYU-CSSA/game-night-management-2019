@@ -14,7 +14,7 @@
 	    <form id="frmFindPlayer" role="form" method="get" action="/operation">
 	        <div class="form-group">
 	            <label for="txtPlayerNum">Player Number</label>
-	            <input type="number" class="form-control" id="txtPlayerNum" placeholder="Enter Player Number" name="playerNum" />
+	            <input type="text" class="form-control" id="txtPlayerNum" placeholder="Enter Player Number" name="playerNum" />
 	        </div>
 	        <button type="submit" class="btn btn-default btn-block">Find</button>
 	    </form>
@@ -22,8 +22,8 @@
 
 
 <% if(player) { %>
-
-
+		
+	
 	  	<div class = "col-lg-3 col-lg-offset-1" id="playerInfo">
 			<table>
 				<th>Current Player Info</th>
@@ -35,6 +35,12 @@
 					<td>Chips: </td>
 					<td><%= chips %></td>
 				</tr>
+
+				<tr>
+					<td>Team: </td>
+					<td><%= team %></td>
+				</tr>
+				
 				<tr>
 					<td>Charge Remaining Times:   </td>
 					<td><%= refillsLeft %></td>
@@ -51,17 +57,18 @@
 	            <label for="txtAddMoney">Add Money(下桌的时候！)</label>
 	            <input type="number" class="form-control" id="txtAddMoney" placeholder="Enter Amount" name="addmoneyamount" min="0" />
 	        </div>
-	        <button type="submit" class="btn btn-default btn-block">Add</button>
+	        <button type="submit" class="btn btn-default btn-block" >Add</button>
     	</form>
 
-    	<form id="frmFindPlayer" role="form" method="post" action="/submoney">
+    	<form id="frmFindPlayer"  role="form" method="post" action="/submoney">
     		<input type="hidden" value=<%= uid %> name="uid" />
 	        <div class="form-group">
 	            <label for="txtTakeOutMoney">Take Out Money(上桌的时候！)</label>
 	            <input type="number" class="form-control" id="txtTakeOutMoney" placeholder="Enter Amount" name="takeoutmoneyamount" min="0" max=<%= chips %> />
 	        </div>
-	        <button type="submit" class="btn btn-default btn-block">Take Out</button>
+	        <button type="submit" class="btn btn-default btn-block" >Take Out</button>
     	</form> 
+    	
     </div>
     
 	<div class="space"></div>

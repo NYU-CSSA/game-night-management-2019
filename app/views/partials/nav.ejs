@@ -1,15 +1,21 @@
-<nav class="navbar navbar-default navbar-static-top navbar-inverse">
+<nav class="navbar navbar-default navbar-static-top navbar-inverse fixed-top">
     <div class="container">
         <ul class="nav navbar-nav">
             <li class="active">
                 <a href="/">Game Night</a>
             </li>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
+        <ul class="nav navbar-nav navbar-right fixed-top">
             <% if (loggedin) { %>
+
                 <li class="navbar-right">
                     <a href="/signout">Sign out</a>
                 </li>
+
+                <li class="navbar-right">
+                    <a href="/docs">Docmentation</a>
+                </li>
+                
 
                 <li class="navbar-right">
                     <a href="/registration">Registration</a>

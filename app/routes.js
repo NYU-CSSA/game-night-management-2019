@@ -1,9 +1,29 @@
 var Player = require("./models/player");
+
 var tournamentAmount = 0;
+
+function CalScore(players){
+    var redScore = 0;
+    var blueScore = 0;
+    for(var i = 0;i<players.length;i++){
+        if(players[i].team=="red"){
+            redScore += players[i].chips;
+        }else if(players[i].team=="blue"){
+            blueScore += players[i].chips
+        }
+       
+    }
+    return [redScore,blueScore]
+}
+
 
 module.exports = function (app, passport) {
     app.get('/', function (req, res) {
         res.render('pages/index', {loggedin: req.isAuthenticated()});
+    });
+
+     app.get('/docs', function (req, res) {
+        res.render('pages/documentation', {loggedin: req.isAuthenticated()});
     });
 
     // app.get('/init', isLoggedIn, function (req, res) {
@@ -69,12 +89,15 @@ module.exports = function (app, passport) {
 
     app.post('/registration', isLoggedIn, function (req, res) {
         var uid = req.body.playNo;
+        var team = req.body.team
+
         if (uid) {
             Player.findOne({'playerNum': uid}, function (err, user) {
                 if (err) {
                     console.log(err);
                     return;
                 }
+
                 //Successfully created user 15, No player number
                 //Successfully added 500 chips to user 10
                 //This user got no refills left.
@@ -107,22 +130,36 @@ module.exports = function (app, passport) {
                     }
                 } else {
                     // create a user
+                    
+
                     var player = new Player();
                     player.playerNum = uid;
+                    player.team = team
+
                     player.save(function (err) {
                         if (err) {
                             throw err;
                         }
                         res.render('pages/registration', {
                             loggedin: req.isAuthenticated(),
-                            msg: "Successfully created user " + uid
+                            msg: "Successfully created user " + uid 
                         });
                     });
                 }
-            });
+            }
+
+
+
+            )
+
+
+            ;
         } else {
             res.render('pages/registration', {loggedin: req.isAuthenticated(), msg: "No player number"});
         }
+
+
+
     });
 
     app.get('/operation', isLoggedIn, function (req, res) {
@@ -134,6 +171,8 @@ module.exports = function (app, passport) {
                     console.log(err);
                     return;
                 }
+
+                console.log(user)
                 if (user) {
                     res.render('pages/operation', {
                         player: user,
@@ -142,7 +181,10 @@ module.exports = function (app, passport) {
                         chips: user.chips,
                         refillsLeft: user.refillsLeft,
                         tournamentAmount: tournamentAmount,
-                        loggedin: true
+                        loggedin: true,
+                        team:user.team
+
+                    
                     });
                 } else {
                     res.render('pages/operation', {player: null, loggedin: true});
@@ -187,6 +229,78 @@ module.exports = function (app, passport) {
         }
     });
 
+   
+
+    app.post("/get_team_score",function(req,res){
+        
+        Player.find({}).exec(function(err,players){
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+
+            var scores = CalScore(players)
+            redScore = scores[0]
+            blueScore = scores[1]
+            var gan = {
+                redScore:redScore,
+                blueScore:blueScore
+            }
+            res.send(gan  
+            )
+           
+           
+        })
+
+        
+    })
+
+     app.post("/get_player_score",function(req,res){
+        
+       Player.find({}).sort({'chips': -1}).limit(10).exec(function (err, players) {
+            if (err) {
+                console.log(err);
+                res.status(500).send(err);
+                return;
+            }
+
+            res.send(JSON.stringify(players) || {});
+        });
+
+        
+    })
+
+       app.post("/red",function(req,res){
+        
+       Player.find({team:"red"}).exec(function (err, players) {
+            if (err) {
+                console.log(err);
+                res.status(500).send(err);
+                return;
+            }
+
+            res.send(JSON.stringify(players) || {});
+        });
+
+        
+    })
+
+         app.post("/blue",function(req,res){
+        
+       Player.find({team:"blue"}).exec(function (err, players) {
+            if (err) {
+                console.log(err);
+                res.status(500).send(err);
+                return;
+            }
+
+            res.send(JSON.stringify(players) || {});
+        });
+
+        
+    })
+
     app.post('/entertournament', function (req, res) {
         var playerId = req.body.uid;
         console.log(playerId);
@@ -216,6 +330,10 @@ module.exports = function (app, passport) {
 
 
 };
+
+
+
+
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
