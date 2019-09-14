@@ -1,6 +1,6 @@
 // define the schema for our user model
 //let url = "mongodb://daimingzhong:123456@ds125555.mlab.com:25555/test-1"
-let url =  "mongodb://jeffcx:a12345@ds147044.mlab.com:47044/nyucssa-gamenight"
+let url =  "mongodb://jeff:hahaha123@ds257848.mlab.com:57848/nyucssa-game-night"
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt-node")
 mongoose.connect(url);
