@@ -239,7 +239,6 @@ module.exports = function (app, passport) {
                 return;
             }
 
-
             var scores = CalScore(players)
             redScore = scores[0]
             blueScore = scores[1]

@@ -1,8 +1,7 @@
-// define the schema for our user model
-//let url = "mongodb://daimingzhong:123456@ds125555.mlab.com:25555/test-1"
-let url =  "mongodb://jeff:hahaha123@ds257848.mlab.com:57848/nyucssa-game-night"
+// connect to mongodb database
+// TODO: use environment variable
+let url =  ""
 const mongoose = require('mongoose');
-const bcrypt = require("bcrypt-node")
 mongoose.connect(url);
 
 // define the schema for our user model
@@ -17,35 +16,35 @@ var playerSchema = mongoose.Schema({
 // create the model for users and expose it to our app
 var player =  mongoose.model('Player', playerSchema);
 
-/*
+const createPlayers = (color, startId, endId) => {
 
-lst = []
+	var playerList = []
 
-for(var i=53600;i<53810;i++){
-	var gan = "A" + i
-	lst.push(gan)
+	for(var i = startId; i < endId; i++){
+		var playerId = "B" + i
+		playerList.push(playerId)
+	}
+
+	for(var i = 0 ; i < playerList.length ; i++){
+		var newPlayer = new player();
+		newPlayer.playerNum = playerList[i]; // set the user's local credentials
+		newPlayer.team = color
+		console.log(`creating player ${playerList[i]}`);
+		newPlayer.save(function (err) { // save the user
+			if (err) {throw err;}
+		});
+	}
+
+	console.log(`${playerList.length} players created`)
+
 }
 
-*/
+let color = "blue"
+let startId = 100000
+let endId = 100005
+createPlayers(color, startId, endId)
 
 
-lst = []
 
-for(var i=47401;i<47610;i++){
-	var gan = "B" + i
-	lst.push(gan)
-}
-
-
-for(var i=0;i<lst.length;i++){
-	var newPlayer = new player();
-newPlayer.playerNum = lst[i]; // set the user's local credentials
-newPlayer.team="blue"
-console.log("creating player");
-newPlayer.save(function (err) { // save the user
-    if (err) {throw err;}
-});
-}
-console.log("done")
 
 
