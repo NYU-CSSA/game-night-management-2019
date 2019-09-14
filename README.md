@@ -47,8 +47,11 @@ https://nyucssa-gamenight.herokuapp.com/
 https://cssa-game-night.herokuapp.com/
 
 2018: 
-Management system: https://gamenight-leaderboard.herokuapp.com/
-dashboard: https://nyucssa-fancy-leaderboard.herokuapp.com/
+Management system: 
+https://gamenight-leaderboard.herokuapp.com/ 
+
+dashboard: 
+https://nyucssa-fancy-leaderboard.herokuapp.com/
 
 2019:
 to be updated
