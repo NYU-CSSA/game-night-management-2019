@@ -1,8 +1,11 @@
 # Game Night Web App
 game night 2018 add red/blue teams, please revert the commit if you want to general function of create/operate players
 please aquire an monogoDB and config the database url in config/database.js
+
 Mlab is very handy: https://mlab.com/
+
 Mlab is a popular nosql database service provided by mongoDB. but since February, 2019, mlab no longer allows new account creation, but the old ones still functions well. 
+
 If the team needs to have access to the mlab account, please contact the previous administor. 
 a quick guide to Mlab: https://www.youtube.com/watch?v=be1e5vmZCj4
 
