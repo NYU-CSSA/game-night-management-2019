@@ -9,6 +9,11 @@ Mlab is a popular nosql database service provided by mongoDB. but since February
 If the team needs to have access to the mlab account, please contact the previous administor. 
 a quick guide to Mlab: https://www.youtube.com/watch?v=be1e5vmZCj4
 
+## 2019 updates
+
+* uses mongoDb to store information of staffs and players
+* remove player teams, add player nicknames and NetId
+
 ## 1. Software Preparation
 ```
 mongodb
@@ -60,4 +65,8 @@ https://nyucssa-fancy-leaderboard.herokuapp.com/
 
 2019:
 
-to be updated
+Management system: 
+https://game-night-management.herokuapp.com/
+
+dashboard: 
+under construction
