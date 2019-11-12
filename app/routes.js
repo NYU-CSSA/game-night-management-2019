@@ -48,23 +48,18 @@ module.exports = function (app, passport) {
         }
     });
 
-    app.get('/refill', isLoggedIn, function (req, res) {
+    app.get('/buyin', isLoggedIn, function (req, res) {
         var op = req.query.op; // op is the button of Creat/Add
         var uid = req.query.uid; // uid is the input ID
         if (!op || !uid) {
-            res.render('pages/refill', { loggedin: req.isAuthenticated(), msg: null });
+            res.render('pages/buyin', { loggedin: req.isAuthenticated(), msg: null });
         } else {
-            var message = null;
-            if (op == "add") {
-                message = "added 500 for player " + uid;
-            } else if (op == "create") {
-                message = "created player " + uid;
-            }
-            res.render('pages/registration', { loggedin: req.isAuthenticated(), msg: message })
+            message = "added 500 for player " + uid;
+            res.render('pages/buyin', { loggedin: req.isAuthenticated(), msg: message })
         }
     });
 
-    app.post('/refill',isLoggedIn,(req,res)=>{
+    app.post('/buyin',isLoggedIn,(req,res)=>{
         var uid = req.body.netId; 
         if (uid) {
             Player.findOne({ 'netId': uid }, function (err, user) {
@@ -72,42 +67,33 @@ module.exports = function (app, passport) {
                     console.log(err);
                     return;
                 }
-
                 if (user) {
                     // update an existing user
-                    if (user.refillsLeft > 0) {
-                        Player.updateOne({ 'netId': uid }, {
-                            $inc: {
-                                'chips': 500,
-                                'refillsLeft': -1
-                            }
-                        }, function (err, user) {
-                            if (err) {
-                                return res.render('pages/refill', {
-                                    loggedin: req.isAuthenticated(),
-                                    msg: "Error adding chips"
-                                });
-                            }
-                                res.render('pages/refill', {
+                    Player.updateOne({ 'netId': uid }, {
+                        $inc: {
+                            'chips': 500,
+                        }
+                    }, function (err, user) {
+                        if (err) {
+                            return res.render('pages/buyin', {
                                 loggedin: req.isAuthenticated(),
-                                msg: "Successfully added 500 chips to player " + uid
+                                msg: "Error adding chips"
                             });
-                        });
-                    } else {
-                        res.render('pages/refill', {
+                        }
+                            res.render('pages/buyin', {
                             loggedin: req.isAuthenticated(),
-                            msg: "This user got no refill left."
+                            msg: "Successfully added 500 chips to player " + uid
                         });
-                    }
+                    });
                 }else{
-                    res.render('pages/refill', {
+                    res.render('pages/buyin', {
                         loggedin: req.isAuthenticated(),
-                        msg: "No such player."
+                        msg: "No such player. Please register first."
                     });                
                 }
             }) 
         } else {
-            res.render('pages/refill', { loggedin: req.isAuthenticated(), msg: "No player netId" });
+            res.render('pages/buyin', { loggedin: req.isAuthenticated(), msg: "No player netId" });
         }
     })
 
@@ -177,8 +163,6 @@ module.exports = function (app, passport) {
                         uid: playerid,
                         nickname: user.nickname,
                         chips: user.chips,
-                        refillsLeft: user.refillsLeft,
-                        tournamentAmount: tournamentAmount,
                         loggedin: true,
                     });
                 } else {
@@ -245,20 +229,10 @@ module.exports = function (app, passport) {
                 console.log(err);
                 return;
             }
-
             if (user.chips < 500) {
                 res.redirect('operation?netId=' + playerId + '&message=' + 'this user does not have sufficient chips');
-            } else if (user.tournamentsLeft <= 0) {
-                res.redirect('operation?netId=' + playerId + '&message=' + 'this user has already entered the tournament too many times');
             } else {
-                Player.updateOne(query, {$inc: {'chips': -100, 'tournamentsLeft': -1}}, function (err, user) {
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
-                    tournamentAmount += 100;
-                    res.redirect('operation?netId=' + playerId + '&message=' + 'Successfully enter this user into tournament');
-                });
+                res.redirect('operation?netId=' + playerId + '&message=' + 'Successfully enter this user into tournament');
             }
         });
     });
