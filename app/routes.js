@@ -1,7 +1,5 @@
 var Player = require("./models/player");
 
-var tournamentAmount = 0;
-
 module.exports = function (app, passport) {
     app.get('/', function (req, res) {
         res.render('pages/index', {loggedin: req.isAuthenticated()});
@@ -93,7 +91,7 @@ module.exports = function (app, passport) {
                 }
             }) 
         } else {
-            res.render('pages/buyin', { loggedin: req.isAuthenticated(), msg: "No player netId" });
+            res.render('pages/buyin', { loggedin: req.isAuthenticated(), msg: "Please enter player netid" });
         }
     })
 
@@ -125,7 +123,13 @@ module.exports = function (app, passport) {
                         loggedin: req.isAuthenticated(),
                         msg: `player ${uid} already exists. cannot register.`
                     });
-                } else {
+                } else if (nickn===""){
+                    res.render('pages/registration', {
+                        loggedin: req.isAuthenticated(),
+                        msg: `please enter a nickname for player ${uid}.`
+                    });
+                }
+                else {
                     // create a player
                     var player = new Player();
                     player.netId = uid;
@@ -143,7 +147,7 @@ module.exports = function (app, passport) {
                 }
             });
         } else {
-            res.render('pages/registration', {loggedin: req.isAuthenticated(), msg: "No player NetId"});
+            res.render('pages/registration', {loggedin: req.isAuthenticated(), msg: "Please enter player netid"});
         }
     });
 
@@ -164,13 +168,14 @@ module.exports = function (app, passport) {
                         nickname: user.nickname,
                         chips: user.chips,
                         loggedin: true,
+                        msg:""
                     });
                 } else {
-                    res.render('pages/operation', {player: null, loggedin: true});
+                    res.render('pages/operation', { player: null, loggedin: true, msg: "Player not found"});
                 }
             });
         } else {
-            res.render('pages/operation', {player: null, loggedin: true});
+            res.render('pages/operation', { player: null, loggedin: true, msg: ""});
         }
     });
 
@@ -209,7 +214,6 @@ module.exports = function (app, passport) {
     });
 
     app.get("/get_player_score",function(req,res){
-        
        Player.find({}).sort({'chips': -1}).limit(10).exec(function (err, players) {
             if (err) {
                 console.log(err);
@@ -220,22 +224,22 @@ module.exports = function (app, passport) {
         });
     })
 
-    app.post('/entertournament', function (req, res) {
-        var playerId = req.body.uid;
-        console.log(playerId);
-        var query = {'netId': playerId};
-        Player.findOne(query, function (err, user) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            if (user.chips < 500) {
-                res.redirect('operation?netId=' + playerId + '&message=' + 'this user does not have sufficient chips');
-            } else {
-                res.redirect('operation?netId=' + playerId + '&message=' + 'Successfully enter this user into tournament');
-            }
-        });
-    });
+    // app.post('/entertournament', function (req, res) {
+    //     var playerId = req.body.uid;
+    //     console.log(playerId);
+    //     var query = {'netId': playerId};
+    //     Player.findOne(query, function (err, user) {
+    //         if (err) {
+    //             console.log(err);
+    //             return;
+    //         }
+    //         if (user.chips < 500) {
+    //             res.redirect('operation?netId=' + playerId + '&message=' + 'this user does not have sufficient chips');
+    //         } else {
+    //             res.redirect('operation?netId=' + playerId + '&message=' + 'Successfully enter this user into tournament');
+    //         }
+    //     });
+    // });
 };
 
 // route middleware to make sure a user is logged in

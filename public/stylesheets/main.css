@@ -42,6 +42,14 @@
   margin-right: auto;
 }
 
+#frmFindPlayer{
+  margin: 30px auto;
+}
+
+.btn.btn-default.btn-block{
+  margin: 30px auto;
+}
+
 /*.indexBody{
   background-color: '#111'
 }*/

@@ -20,7 +20,6 @@
 	    </form>
     </div>
 
-
 <% if(player) { %>
 		
 	
@@ -38,11 +37,6 @@
 				<tr>
 					<td>Chips: </td>
 					<td><%= chips %></td>
-				</tr>
-				
-				<tr>
-					<td>Charge Remaining Times:   </td>
-					<td><%= refillsLeft %></td>
 				</tr>
 			</table>
 		</div>
@@ -72,21 +66,18 @@
     
 	<div class="space"></div>
 
-	<div class="container">
+	<!-- <div class="container">
     	<form id="frmEnterTexas" role="form" method="post" action="/entertournament">
     		<input type="hidden" value=<%= uid %> name="uid" />
         	<button type="submit" class="btn btn-danger btn-block">ENTER TEXAS TOURNAMENT</button>
     	</form>
-	</div>
-
-<!-- In case You need Tournament Pool function, just uncomment the following line -->
-<!-- 	<div class="container">
-		<h4>Current Chips in Tournament Pool: <%= tournamentAmount %></h4> 
 	</div> -->
-
 
 <% } %>
 
+<% if(msg) { %>
+<h4 class="text-center"><%= msg %></h4>
+<% } %>
 
 </body>
 </html>
