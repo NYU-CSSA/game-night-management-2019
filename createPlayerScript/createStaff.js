@@ -1,11 +1,18 @@
 
 // connect to mongodb database
 // TODO: use environment variable
-let url =  ""
-
+const path = require('path')
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt-node")
-mongoose.connect(url);
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const dbURI = process.env.ATLAS_URI
+
+console.log(dbURI)
+
+mongoose.connect(dbURI, { useNewUrlParser: true, useCreateIndex: true}, function (error) {
+	//Errors here
+	// console.log(error);
+});
 
 // define the schema for our user model
 var staffSchema = mongoose.Schema({
@@ -23,37 +30,33 @@ staffSchema.methods.generateHash = function(password) {
 let Staff = mongoose.model('Staff', staffSchema);
 
 // define a list of staff's email
-let emailList = `cs5075@nyu.edu
-xl2228@nyu.edu
-mikechenwm@gmail.com
+let emailList = `sm7515@nyu.edu
+ml5333@nyu.edu
 yw3210@nyu.edu
-xm535@nyu.edu
-yc3361@nyu.edu
-xc1295@nyu.edu
-changgeng@nyu.edu
+yw3208@nyu.edu
+bx417@nyu.edu
+hy1655@nyu.edu
+yl6435@nyu.edu
+jt3823@nyu.edu
+bc2716@nyu.edu
+bz1037@nyu.edu
 ah4771@nyu.edu
-ts3385@nyu.edu
-my1793@nyu.edu
-kl3348@nyu.com
-xw1901@nyu.edu
-yf874@nyu.edu
-xz2183@nyu.edu
-lw1952@nyu.edu
+jw5524@nyu.edu
+xh990@nyu.edu
+wl1877@nyu.edu
+zj637@nyu.edu
+hy1461@nyu.edu
 hl3003@nyu.edu
-tl2594@nyu.edu
-ys3453@nyu.edu
-yz5164@nyu.edu
-jk5542@nyu.edu
-zd470@nyu.edu
-yf1204@nyu.edu
-qw735@nyu.edu
-xg542@nyu.edu
-pp1813@nyu.edu
-fw724@nyu.edu
-zy1222@nyu.edu
-ms10001@nyu.edu
-cathyes@163.com
-`
+yl5287@nyu.edu
+zw1794@nyu.edu
+sc7808@nyu.edu
+yhg208@nyu.edu
+bz1072@nyu.edu
+yc3361@nyu.edu
+cj1231@nyu.edu
+az1876@nyu.edu
+yht243@nyu.edu
+yw4359@nyu.edu`
 
 const createStaff = (emailList, defaultPassword) => {
 
@@ -65,17 +68,24 @@ const createStaff = (emailList, defaultPassword) => {
 		var password = defaultPassword;
 		newUser.email = email; 
 		newUser.password = newUser.generateHash(password);
-		console.log(`creating staff ${email}`);
+		console.log(`creating user ${newUser.email}`)
 		newUser.save(function (err) {
-			if (err) {throw err;}
+			if (err) {
+				throw err;
+			}
 		});
+		// Staff.findOne({ email: emailList[i] },function (err,user) {
+		// 	if(err) console.log(err)
+		// 	if (user) console.log("staff already exists!")
+		// 	else {
+		// 		newUserList.push(newUser);
+		// 		console.log("hiii")
+		// 	}
+		// })
+
 	}
-
 	console.log(`${emailList.length} staffs created`)
-
 }
 
-let defaultPassword = "123"
+let defaultPassword = "888"
 createStaff(emailList, defaultPassword)
-
-

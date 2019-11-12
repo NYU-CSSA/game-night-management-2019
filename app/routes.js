@@ -2,21 +2,6 @@ var Player = require("./models/player");
 
 var tournamentAmount = 0;
 
-function CalScore(players){
-    var redScore = 0;
-    var blueScore = 0;
-    for(var i = 0;i<players.length;i++){
-        if(players[i].team=="red"){
-            redScore += players[i].chips;
-        }else if(players[i].team=="blue"){
-            blueScore += players[i].chips
-        }
-       
-    }
-    return [redScore,blueScore]
-}
-
-
 module.exports = function (app, passport) {
     app.get('/', function (req, res) {
         res.render('pages/index', {loggedin: req.isAuthenticated()});
@@ -26,14 +11,8 @@ module.exports = function (app, passport) {
         res.render('pages/documentation', {loggedin: req.isAuthenticated()});
     });
 
-    // app.get('/init', isLoggedIn, function (req, res) {
-    //     req.render('/', {message: " "});
-    //     res.redirect('/');
-    // });
-
     app.get('/signup', isLoggedIn, function (req, res) {
         res.render('pages/signup', {message: req.flash('signupMessage'), loggedin: req.isAuthenticated()});
-        //   res.render('pages/signup', {message : req.flash('signupMessage'), loggedin:true});
     });
 
     app.get('/login', function (req, res) {
@@ -42,6 +21,7 @@ module.exports = function (app, passport) {
 
     // process the signup form
     app.post('/signup', passport.authenticate('local-signup', {
+
         successRedirect: '/login', // redirect to the secure profile section
         failureRedirect: '/signup', // redirect back to the signup page if there is an error
         failureFlash: true // allow flash messages
@@ -58,12 +38,21 @@ module.exports = function (app, passport) {
         res.redirect('/');
     });
 
-
     app.get('/registration', isLoggedIn, function (req, res) {
+        var uid = req.query.uid; // uid is the input ID
+        if (!uid) {
+            res.render('pages/registration', {loggedin: req.isAuthenticated(), msg: null});
+        } else {
+            var message = "created player " + uid;
+            res.render('pages/registration', {loggedin: req.isAuthenticated(), msg: message})
+        }
+    });
+
+    app.get('/refill', isLoggedIn, function (req, res) {
         var op = req.query.op; // op is the button of Creat/Add
         var uid = req.query.uid; // uid is the input ID
         if (!op || !uid) {
-            res.render('pages/registration', {loggedin: req.isAuthenticated(), msg: null});
+            res.render('pages/refill', { loggedin: req.isAuthenticated(), msg: null });
         } else {
             var message = null;
             if (op == "add") {
@@ -71,9 +60,56 @@ module.exports = function (app, passport) {
             } else if (op == "create") {
                 message = "created player " + uid;
             }
-            res.render('pages/registration', {loggedin: req.isAuthenticated(), msg: message})
+            res.render('pages/registration', { loggedin: req.isAuthenticated(), msg: message })
         }
     });
+
+    app.post('/refill',isLoggedIn,(req,res)=>{
+        var uid = req.body.netId; 
+        if (uid) {
+            Player.findOne({ 'netId': uid }, function (err, user) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+
+                if (user) {
+                    // update an existing user
+                    if (user.refillsLeft > 0) {
+                        Player.updateOne({ 'netId': uid }, {
+                            $inc: {
+                                'chips': 500,
+                                'refillsLeft': -1
+                            }
+                        }, function (err, user) {
+                            if (err) {
+                                return res.render('pages/refill', {
+                                    loggedin: req.isAuthenticated(),
+                                    msg: "Error adding chips"
+                                });
+                            }
+                                res.render('pages/refill', {
+                                loggedin: req.isAuthenticated(),
+                                msg: "Successfully added 500 chips to player " + uid
+                            });
+                        });
+                    } else {
+                        res.render('pages/refill', {
+                            loggedin: req.isAuthenticated(),
+                            msg: "This user got no refill left."
+                        });
+                    }
+                }else{
+                    res.render('pages/refill', {
+                        loggedin: req.isAuthenticated(),
+                        msg: "No such player."
+                    });                
+                }
+            }) 
+        } else {
+            res.render('pages/refill', { loggedin: req.isAuthenticated(), msg: "No player netId" });
+        }
+    })
 
     app.get('/topplayers', function (req, res) {
         console.log("querying topplayers");
@@ -88,53 +124,26 @@ module.exports = function (app, passport) {
     });
 
     app.post('/registration', isLoggedIn, function (req, res) {
-        var uid = req.body.playNo;
-        var team = req.body.team
+        var uid = req.body.netId;
+        var nickn = req.body.nickname;
 
         if (uid) {
-            Player.findOne({'playerNum': uid}, function (err, user) {
+            Player.findOne({'netId': uid}, function (err, user) {
                 if (err) {
                     console.log(err);
                     return;
                 }
 
-                //Successfully created user 15, No player number
-                //Successfully added 500 chips to user 10
-                //This user got no refills left.
-
                 if (user) {
-                    // update an existing user
-                    if (user.refillsLeft > 0) {
-                        Player.update({'playerNum': uid}, {
-                            $inc: {
-                                'chips': 500,
-                                'refillsLeft': -1
-                            }
-                        }, {}, function (err, user) {
-                            if (err) {
-                                return res.render('pages/registration', {
-                                    loggedin: req.isAuthenticated(),
-                                    msg: "Error adding chips"
-                                });
-                            }
-                            res.render('pages/registration', {
-                                loggedin: req.isAuthenticated(),
-                                msg: "Successfully added 500 chips to user " + uid
-                            });
-                        });
-                    } else {
-                        res.render('pages/registration', {
-                            loggedin: req.isAuthenticated(),
-                            msg: "This user got no refill left."
-                        });
-                    }
+                    res.render('pages/registration', {
+                        loggedin: req.isAuthenticated(),
+                        msg: `player ${uid} already exists. cannot register.`
+                    });
                 } else {
-                    // create a user
-                    
-
+                    // create a player
                     var player = new Player();
-                    player.playerNum = uid;
-                    player.team = team
+                    player.netId = uid;
+                    player.nickname = nickn;
 
                     player.save(function (err) {
                         if (err) {
@@ -142,49 +151,35 @@ module.exports = function (app, passport) {
                         }
                         res.render('pages/registration', {
                             loggedin: req.isAuthenticated(),
-                            msg: "Successfully created user " + uid 
+                            msg: "Successfully created player " + uid 
                         });
                     });
                 }
-            }
-
-
-
-            )
-
-
-            ;
+            });
         } else {
-            res.render('pages/registration', {loggedin: req.isAuthenticated(), msg: "No player number"});
+            res.render('pages/registration', {loggedin: req.isAuthenticated(), msg: "No player NetId"});
         }
-
-
-
     });
 
     app.get('/operation', isLoggedIn, function (req, res) {
-        var playerid = req.query.playerNum;
+        var playerid = req.query.netId;
         console.log(playerid);
         if (playerid) {
-            Player.findOne({'playerNum': playerid}, function (err, user) {
+            Player.findOne({'netId': playerid}, function (err, user) {
                 if (err) {
                     console.log(err);
                     return;
                 }
-
-                console.log(user)
+                // console.log(user)
                 if (user) {
                     res.render('pages/operation', {
                         player: user,
                         uid: playerid,
-                        playerNum: user.playerNum,
+                        nickname: user.nickname,
                         chips: user.chips,
                         refillsLeft: user.refillsLeft,
                         tournamentAmount: tournamentAmount,
                         loggedin: true,
-                        team:user.team
-
-                    
                     });
                 } else {
                     res.render('pages/operation', {player: null, loggedin: true});
@@ -195,67 +190,41 @@ module.exports = function (app, passport) {
         }
     });
 
+    // $inc, Mongodb, add a certain number
     app.post('/addmoney', function (req, res) {
         var addAmount = parseInt(req.body.addmoneyamount);
         if (addAmount >= -1000000) { // in the case of NaN error. in that case, go to operation page
             // parseInt, transform a string to int.
             var playerId = req.body.uid;
-            Player.update({'playerNum': playerId}, {$inc: {'chips': addAmount}}, function (err, user) {
+            Player.updateOne({ 'netId': playerId }, { $inc: { 'chips': addAmount}}, function (err, user) {
                 if (err) {
                     console.log(err);
                     return;
                 }
-                res.redirect('operation?playerNum=' + playerId);
+                res.redirect('operation?netId=' + playerId + '&addedAmount=' +addAmount);
             });
         } else {
-            res.redirect('operation?playerNum=' + playerId);
+            res.redirect('operation');
         }
     });
 
-// $inc, Mongodb, add a certain number
     app.post('/submoney', function (req, res) {
-        var subAmount = -1 * parseInt(req.body.takeoutmoneyamount); // this is the most unreadable naming ever
+        var subAmount = parseInt(req.body.takeoutmoneyamount); // this is the most unreadable naming ever
         if (subAmount <= 1000000) {
             var playerId = req.body.uid;
-            Player.update({'playerNum': playerId}, {$inc: {'chips': subAmount}}, function (err, user) {
+            Player.updateOne({ 'netId': playerId }, { $inc: { 'chips': -subAmount} }, function (err, user) {
                 if (err) {
                     console.log(err);
                     return;
                 }
-                res.redirect('operation?playerNum=' + playerId);
+                res.redirect('operation?netId=' + playerId + '&subtractedAmount=' + subAmount);
             });
         } else {
-            res.redirect('operation?playerNum=' + playerId);
+            res.redirect('operation');
         }
     });
 
-   
-
-    app.post("/get_team_score",function(req,res){
-        
-        Player.find({}).exec(function(err,players){
-            if (err) {
-                console.log(err);
-                return;
-            }
-
-            var scores = CalScore(players)
-            redScore = scores[0]
-            blueScore = scores[1]
-            var gan = {
-                redScore:redScore,
-                blueScore:blueScore
-            }
-            res.send(gan  
-            )
-           
-           
-        })
-
-        
-    })
-
-     app.post("/get_player_score",function(req,res){
+    app.get("/get_player_score",function(req,res){
         
        Player.find({}).sort({'chips': -1}).limit(10).exec(function (err, players) {
             if (err) {
@@ -263,47 +232,14 @@ module.exports = function (app, passport) {
                 res.status(500).send(err);
                 return;
             }
-
             res.send(JSON.stringify(players) || {});
         });
-
-        
-    })
-
-       app.post("/red",function(req,res){
-        
-       Player.find({team:"red"}).exec(function (err, players) {
-            if (err) {
-                console.log(err);
-                res.status(500).send(err);
-                return;
-            }
-
-            res.send(JSON.stringify(players) || {});
-        });
-
-        
-    })
-
-         app.post("/blue",function(req,res){
-        
-       Player.find({team:"blue"}).exec(function (err, players) {
-            if (err) {
-                console.log(err);
-                res.status(500).send(err);
-                return;
-            }
-
-            res.send(JSON.stringify(players) || {});
-        });
-
-        
     })
 
     app.post('/entertournament', function (req, res) {
         var playerId = req.body.uid;
         console.log(playerId);
-        var query = {'playerNum': playerId};
+        var query = {'netId': playerId};
         Player.findOne(query, function (err, user) {
             if (err) {
                 console.log(err);
@@ -311,28 +247,22 @@ module.exports = function (app, passport) {
             }
 
             if (user.chips < 500) {
-                res.redirect('operation?playerNum=' + playerId + '&message=' + 'this user does not have sufficient chips');
+                res.redirect('operation?netId=' + playerId + '&message=' + 'this user does not have sufficient chips');
             } else if (user.tournamentsLeft <= 0) {
-                res.redirect('operation?playerNum=' + playerId + '&message=' + 'this user has already entered the tournament too many times');
+                res.redirect('operation?netId=' + playerId + '&message=' + 'this user has already entered the tournament too many times');
             } else {
-                Player.update(query, {$inc: {'chips': -100, 'tournamentsLeft': -1}}, function (err, user) {
+                Player.updateOne(query, {$inc: {'chips': -100, 'tournamentsLeft': -1}}, function (err, user) {
                     if (err) {
                         console.log(err);
                         return;
                     }
                     tournamentAmount += 100;
-                    res.redirect('operation?playerNum=' + playerId + '&message=' + 'Successfully enter this user into tournament');
+                    res.redirect('operation?netId=' + playerId + '&message=' + 'Successfully enter this user into tournament');
                 });
             }
         });
     });
-
-
 };
-
-
-
-
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {

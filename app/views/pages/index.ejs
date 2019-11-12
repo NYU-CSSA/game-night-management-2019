@@ -54,7 +54,7 @@ w
                     var player_numbers = [];
                     var player_chips = [];
                     for (var i = data.length - 1; i > -1; i--) {
-                        player_numbers.push(data[i].playerNum.toString())
+                        player_numbers.push(data[i].netId.toString())
                         player_chips.push(data[i].chips)
                     }
 
@@ -182,7 +182,7 @@ w
                     myChart.setOption(option);
                 }, dataType: "json", complete: poll
             });
-        }, 3000);
+        }, 2000);
     })();
 </script>
 

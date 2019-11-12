@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/header.ejs %>
+</head>
+
+<body>
+
+    <% include ../partials/nav.ejs %>
+
+    <div id="container" class="container">
+
+        <!-- LOGIN -->
+        <form id="frmLogin" role="form" method="post" action="/refill">
+            <h2>Refill Player</h2>
+
+            <div class="form-group">
+                <label for="txtPlayerNetId">Player NetId</label>
+                <input type="text" class="form-control" id="txtPlayerNetId" placeholder="Enter Player NetId"
+                    name="netId" />
+            </div>
+
+    </div>
+
+    <button type="submit" class="btn btn-default btn-block">Add</button>
+    <br />
+    <br />
+    </form>
+    <!-- / LOGOUT -->
+    </div>
+
+    <% if(msg) { %>
+    <h4 class="text-center"><%= msg %></h4>
+    <% } %>
+
+</body>
+
+</html>

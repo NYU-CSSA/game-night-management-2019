@@ -3,26 +3,38 @@
 
 var express  = require('express');
 var app      = express();
-var port     = process.env.PORT || 3000;
+var port     = process.env.PORT || 5000;
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
-
+var cors = require('cors');
 var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
+require('dotenv').config();
+
 app.use(flash()); // use connect-flash for flash messages stored in session
 require('./config/passport')(passport); // pass passport for configuration
 
-var configDB = require('./config/database.js');
-mongoose.connect(configDB.url); // connect to our database
-console.log("mongoose connection status: " + mongoose.connection.readyState + ". // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting");
+//=============================================================
+/**
+ * Database connection
+ */
+const dbURI = process.env.ATLAS_URI
 
+mongoose.connect(dbURI, { useNewUrlParser: true, useCreateIndex: true }, function (error) {
+    //Errors here
+    // console.log(error);
+});
 
-// app.configure()
+mongoose.connection.once('open', () => {
+    console.log("MongoDB database connection suceeded");
+});
+
 // set up our express application
+app.use(cors());
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.json()); // get information from html forms

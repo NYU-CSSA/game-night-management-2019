@@ -13,8 +13,8 @@
   	<div class="col-lg-6">
 	    <form id="frmFindPlayer" role="form" method="get" action="/operation">
 	        <div class="form-group">
-	            <label for="txtPlayerNum">Player Number</label>
-	            <input type="text" class="form-control" id="txtPlayerNum" placeholder="Enter Player Number" name="playerNum" />
+	            <label for="txtPlayerNetId">Player netId</label>
+	            <input type="text" class="form-control" id="txtPlayerNetId" placeholder="Enter Player NetId" name="netId" />
 	        </div>
 	        <button type="submit" class="btn btn-default btn-block">Find</button>
 	    </form>
@@ -28,17 +28,16 @@
 			<table>
 				<th>Current Player Info</th>
 				<tr>
-					<td>Player No.</td>
-					<td><%= playerNum %></td>
+					<td>Player NetId: </td>
+					<td><%= uid %></td>
+				</tr>
+				<tr>
+					<td>Player Nickname: </td>
+					<td><%= nickname %></td>
 				</tr>
 				<tr>
 					<td>Chips: </td>
 					<td><%= chips %></td>
-				</tr>
-
-				<tr>
-					<td>Team: </td>
-					<td><%= team %></td>
 				</tr>
 				
 				<tr>
@@ -57,7 +56,7 @@
 	            <label for="txtAddMoney">Add Money(下桌的时候！)</label>
 	            <input type="number" class="form-control" id="txtAddMoney" placeholder="Enter Amount" name="addmoneyamount" min="0" />
 	        </div>
-	        <button type="submit" class="btn btn-default btn-block" >Add</button>
+	        <button type="submit" class="btn btn-default btn-block">Add</button>
     	</form>
 
     	<form id="frmFindPlayer"  role="form" method="post" action="/submoney">
